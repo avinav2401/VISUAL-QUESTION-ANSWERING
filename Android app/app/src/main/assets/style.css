@@ -889,9 +889,26 @@ body {
     .right-sub { font-size: 0.72rem; }
     .ta-answer { font-size: 1.5rem; }
 
-    /* Chips wrap on mobile */
-    .chips { flex-wrap: wrap; justify-content: center; overflow-x: visible; padding-bottom: 4px; }
-    .chip { flex-shrink: 1; }
+    /* Professional Grid Layout for mobile chips */
+    .chips { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 10px; 
+        overflow-x: visible; 
+        padding-bottom: 4px; 
+        width: 100%;
+    }
+    .chip { 
+        width: 100%; 
+        padding: 12px 8px; 
+        font-size: 0.8rem; 
+        white-space: normal; 
+        line-height: 1.25; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
 
     /* Sticky Question Box */
     .ask-btn { 
