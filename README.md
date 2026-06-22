@@ -129,7 +129,7 @@ This repository serves as a comprehensive showcase of modern AI and App Developm
 
 | **Domain** | **Concepts Demonstrated** |
 | :--- | :--- |
-| **Deep Learning** | ✅ CNN / ViT (Image Features)<br>✅ LSTM / Transformer Architectures<br>✅ Sequence Models & Word Embeddings<br>✅ Encoder-Decoder Concepts |
+| **Deep Learning** | ✅ CNN / ViT (Image Patch Features)<br>✅ Transformer Architectures<br>✅ Sequence Models & Word Embeddings<br>✅ Cross-Modal Encoders |
 | **Multimodal AI** | ✅ Multimodal Learning (Image + Text)<br>✅ Feature Fusion<br>✅ Question Understanding<br>✅ Answer Generation |
 | **Core AI Fields**| ✅ Natural Language Processing (NLP)<br>✅ Computer Vision (CV) |
 | **Voice & Speech** | ✅ Speech Recognition (Speech-to-Text)<br>✅ Text-to-Speech (TTS) |
