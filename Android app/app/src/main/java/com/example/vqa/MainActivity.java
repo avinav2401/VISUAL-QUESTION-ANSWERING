@@ -226,6 +226,11 @@ public class MainActivity extends AppCompatActivity {
             is.close();
             
             ivPreview.setImageBitmap(currentBitmap);
+            ivPreview.clearColorFilter(); // Remove the purple tint!
+            ivPreview.getLayoutParams().width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+            ivPreview.getLayoutParams().height = 800; // Make the preview larger
+            ivPreview.requestLayout();
+            
             tvDropText.setVisibility(View.GONE);
             tvFormats.setVisibility(View.GONE);
         } catch (Exception e) {
