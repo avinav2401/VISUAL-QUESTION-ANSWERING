@@ -30,7 +30,7 @@ This project aims to replicate that dual-processing capability, featuring a unif
 
 | Context | Environment | Focus |
 |:---|:---|:---|
-| 📱 **The Edge** | Android App | Designed for portability, wrapping the modern web UI in a lightweight native container that accesses the powerful cloud models. |
+| 📱 **The Edge** | Android App | Designed for portability and performance, utilizing a 100% Native Android UI with Java and XML, directly connecting to powerful cloud models. |
 | ☁️ **The Cloud** | Web App | Built for unrestricted computational power, leveraging state-of-the-art transformer architectures for complex reasoning. |
 
 ---
@@ -55,7 +55,7 @@ graph TD
     B --> D[Synthesized Answer]
     
     E[Web Browser] --> |API Request| B
-    F[Android App WebView] --> |API Request| B
+    F[Native Android App] --> |OkHttp Multipart Request| B
 ```
 
 ---
@@ -67,7 +67,7 @@ The repository is modularly structured to separate the training environments fro
 | Directory | Purpose | Contents |
 |:---|:---|:---|
 | 📓 **`/Model`** | The research and training nexus. | Jupyter notebooks detailing data preprocessing and legacy model generation. |
-| 📱 **`/Android app`** | The native mobile application workspace. | A lightweight Android WebView wrapper that hosts the frontend UI locally and connects to the cloud backend. |
+| 📱 **`/Android app`** | The native mobile application workspace. | A fully native Android application built with XML Layouts, Java, and OkHttp to securely interface with the cloud backend. Features native Camera, Gallery, Speech-to-Text, and Text-to-Speech intents. |
 | 🌐 **`/WebApp`** | The full-stack web portal. | The `backend/` runs the FastAPI inference server, while the `frontend/` provides a highly responsive, animated, vanilla web interface. |
 
 ---
@@ -113,8 +113,8 @@ Ensure you have the latest version of **Android Studio** installed.
 
 1. Launch Android Studio and select **"Open an existing project"**.
 2. Navigate to and select the `Android app/` folder in this repository.
-3. Allow the Gradle build system to resolve and sync all dependencies.
-4. Connect a physical Android device and click **Run** to compile the lightweight APK.
+3. Allow the Gradle build system to resolve and sync all dependencies (including `OkHttp`).
+4. Connect a physical Android device and click **Run** to compile the fully native APK.
 
 > [!WARNING]
 > We strongly recommend a **physical Android device** over an emulator to ensure full camera hardware support for taking pictures of your surroundings.
