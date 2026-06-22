@@ -155,34 +155,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     const recognition = new SpeechRecognition();
                     window.activeRecognition = recognition;
-                    recognition.continuous = true;
-                    recognition.interimResults = true;
+                    recognition.continuous = false;
+                    recognition.interimResults = false;
 
                     recognition.onstart = () => {
                         micBtn.classList.add('listening');
                         micBtn.textContent = '🛑';
                         questionInput.placeholder = 'Listening...';
-                        window.speechTranscript = '';
                     };
 
                     recognition.onresult = (e) => {
                         let finalTrans = '';
-                        let interimTrans = '';
                         for (let i = e.resultIndex; i < e.results.length; ++i) {
                             if (e.results[i].isFinal) {
                                 finalTrans += e.results[i][0].transcript;
-                            } else {
-                                interimTrans += e.results[i][0].transcript;
                             }
                         }
-                        if (finalTrans) window.speechTranscript += finalTrans;
-                        questionInput.value = window.speechTranscript + interimTrans;
-                        syncBtn();
-                        
-                        // Auto-submit if final result is available and ready
-                        if (finalTrans && !askBtn.disabled) {
-                            askBtn.click();
-                            recognition.stop();
+                        if (finalTrans) {
+                            questionInput.value = finalTrans;
+                            syncBtn();
+                            
+                            // Auto-submit if ready
+                            if (!askBtn.disabled) {
+                                askBtn.click();
+                            }
                         }
                     };
 
