@@ -226,9 +226,9 @@ public class MainActivity extends AppCompatActivity {
             is.close();
             
             ivPreview.setImageBitmap(currentBitmap);
-            ivPreview.clearColorFilter(); // Remove the purple tint!
+            ivPreview.setImageTintList(null); // This properly removes app:tint
             ivPreview.getLayoutParams().width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-            ivPreview.getLayoutParams().height = 800; // Make the preview larger
+            ivPreview.getLayoutParams().height = 800; 
             ivPreview.requestLayout();
             
             tvDropText.setVisibility(View.GONE);
