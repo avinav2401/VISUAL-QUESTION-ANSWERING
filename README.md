@@ -15,6 +15,10 @@ Welcome to the **Visual Question Answering (VQA)** project. This repository repr
 > [!NOTE]
 > **Accessibility First**
 > At its core, this project is an accessibility initiative. By giving machines the ability to describe and answer questions about the visual world, we create powerful tools for the visually impaired, allowing them to interact with their surroundings through a seamless interface.
+> 
+> **Enhanced Voice Features:**
+> - 🎙️ **Speech-to-Text (Voice Input):** Users can click the microphone button to speak their questions instead of typing.
+> - 🔊 **Text-to-Speech (Voice Output):** The AI automatically reads the answer out loud. Users can easily toggle this feature on/off using the speaker button right next to the microphone.
 
 ---
 
