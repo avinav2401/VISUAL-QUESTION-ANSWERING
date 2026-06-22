@@ -87,6 +87,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Load the local HTML file
         webView.loadUrl("file:///android_asset/index.html");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA}, 101);
+            }
+        }
     }
 
     private void launchImagePicker() {
