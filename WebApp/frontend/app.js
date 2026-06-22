@@ -2,6 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Detect Android App
     if (navigator.userAgent.includes("VQA-Android-App")) {
         document.body.classList.add('android-app');
+        const imgView = document.getElementById('img-view');
+        const rightHeader = document.querySelector('.right-header');
+        if (imgView && rightHeader) {
+            rightHeader.parentNode.insertBefore(imgView, rightHeader);
+        }
     }
 
     const imageInput    = document.getElementById('image-input');

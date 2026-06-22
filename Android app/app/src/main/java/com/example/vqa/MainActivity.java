@@ -179,7 +179,10 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (matches != null && matches.size() > 0) {
                 String text = matches.get(0);
-                webView.evaluateJavascript("javascript:if(window.onAndroidSpeechResult) window.onAndroidSpeechResult('" + text.replace("'", "\\'") + "');", null);
+                try {
+                    String base64Text = android.util.Base64.encodeToString(text.getBytes("UTF-8"), android.util.Base64.NO_WRAP);
+                    webView.evaluateJavascript("javascript:if(window.onAndroidSpeechResult) window.onAndroidSpeechResult(decodeURIComponent(escape(atob('" + base64Text + "'))));", null);
+                } catch (Exception e) {}
             }
             return;
         }
