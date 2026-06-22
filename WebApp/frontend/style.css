@@ -885,8 +885,9 @@ body {
         gap: 16px; 
     }
     
-    .right-title { font-size: 1.4rem; }
-    .right-sub { font-size: 0.72rem; }
+    .right-header { display: none !important; }
+    .gemini-greeting { display: none !important; }
+
     .ta-answer { font-size: 1.5rem; }
 
     /* Chips scroll horizontally */
