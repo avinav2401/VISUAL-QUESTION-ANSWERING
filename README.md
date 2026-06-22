@@ -123,6 +123,24 @@ Ensure you have the latest version of **Android Studio** installed.
 
 <div align="center">
 
+### 💡 Skills & Concepts Covered
+
+This repository serves as a comprehensive showcase of modern AI and App Development concepts, successfully bridging multiple domains into a single functional product:
+
+| **Domain** | **Concepts Demonstrated** |
+| :--- | :--- |
+| **Deep Learning** | ✅ CNN / ViT (Image Features)<br>✅ LSTM / Transformer Architectures<br>✅ Sequence Models & Word Embeddings<br>✅ Encoder-Decoder Concepts |
+| **Multimodal AI** | ✅ Multimodal Learning (Image + Text)<br>✅ Feature Fusion<br>✅ Question Understanding<br>✅ Answer Generation |
+| **Core AI Fields**| ✅ Natural Language Processing (NLP)<br>✅ Computer Vision (CV) |
+| **Voice & Speech** | ✅ Speech Recognition (Speech-to-Text)<br>✅ Text-to-Speech (TTS) |
+| **Engineering** | ✅ Mobile App Development (Android)<br>✅ Accessibility-First Design |
+
+</div>
+
+<br>
+
+<div align="center">
+
 ### Acknowledgments
 
 This project is built upon the foundational work of the VQA dataset creators, the developers of PyTorch and TensorFlow, and the open-source advancements in transformer architectures by HuggingFace. 
