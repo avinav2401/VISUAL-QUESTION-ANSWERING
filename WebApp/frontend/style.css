@@ -882,16 +882,26 @@ body {
         flex: 1 1 auto;
         overflow-y: auto;
         padding: 20px 16px 100px 16px; /* 100px bottom padding for sticky q-box */
-        gap: 16px; 
+        gap: 16px;
     }
     
     .right-title { font-size: 1.4rem; }
     .right-sub { font-size: 0.72rem; }
     .ta-answer { font-size: 1.5rem; }
 
-    /* Chips wrap naturally on mobile like desktop */
-    .chips { flex-wrap: wrap; }
-    .chip { flex-shrink: 1; }
+    /* Chips scroll horizontally on mobile without visible scrollbar */
+    .chips { 
+        flex-wrap: nowrap; 
+        overflow-x: auto; 
+        padding-bottom: 4px; 
+        -webkit-overflow-scrolling: touch; 
+        scrollbar-width: none; 
+        -ms-overflow-style: none; 
+    }
+    .chips::-webkit-scrollbar {
+        display: none;
+    }
+    .chip { flex-shrink: 0; }
 
     /* Sticky Question Box */
     .ask-btn { 
