@@ -35,7 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---- Helpers ----
     function showState(el) {
         [loadingState, resultsState, errorState].forEach(s => s && s.classList.add('hidden'));
-        el && el.classList.remove('hidden');
+        if (el) el.classList.remove('hidden');
+        
+        // Hide header and chips when loading or showing results
+        if (el === loadingState || el === resultsState) {
+            const rightHeader = document.querySelector('.right-header');
+            const chipsContainer = document.querySelector('.chips');
+            if (rightHeader) rightHeader.style.display = 'none';
+            if (chipsContainer) chipsContainer.style.display = 'none';
+            if (geminiGreeting) geminiGreeting.style.display = 'none';
+        }
     }
 
     function syncBtn() {
@@ -64,6 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
         imageInput.value = '';
         imgPreviewWrap.classList.add('hidden');
         imgPlaceholder.classList.remove('hidden');
+        
+        const rightHeader = document.querySelector('.right-header');
+        const chipsContainer = document.querySelector('.chips');
+        if (rightHeader) rightHeader.style.display = '';
+        if (chipsContainer) chipsContainer.style.display = '';
+        
+        showState(null);
+        
         if (geminiGreeting && document.body.classList.contains('android-app')) {
             geminiGreeting.style.display = 'flex';
         }

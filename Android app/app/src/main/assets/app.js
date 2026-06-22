@@ -35,7 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---- Helpers ----
     function showState(el) {
         [loadingState, resultsState, errorState].forEach(s => s && s.classList.add('hidden'));
-        el && el.classList.remove('hidden');
+        if (el) el.classList.remove('hidden');
+        
+        // Hide header and chips when loading or showing results
+        if (el === loadingState || el === resultsState) {
+            const rightHeader = document.querySelector('.right-header');
+            const chipsContainer = document.querySelector('.chips');
+            if (rightHeader) rightHeader.style.display = 'none';
+            if (chipsContainer) chipsContainer.style.display = 'none';
+            if (geminiGreeting) geminiGreeting.style.display = 'none';
+        }
     }
 
     function syncBtn() {
@@ -64,6 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
         imageInput.value = '';
         imgPreviewWrap.classList.add('hidden');
         imgPlaceholder.classList.remove('hidden');
+        
+        const rightHeader = document.querySelector('.right-header');
+        const chipsContainer = document.querySelector('.chips');
+        if (rightHeader) rightHeader.style.display = '';
+        if (chipsContainer) chipsContainer.style.display = '';
+        
+        showState(null);
+        
         if (geminiGreeting && document.body.classList.contains('android-app')) {
             geminiGreeting.style.display = 'flex';
         }
@@ -138,20 +155,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     const recognition = new SpeechRecognition();
                     window.activeRecognition = recognition;
-                    recognition.continuous = false;
-                    recognition.interimResults = false;
+                    recognition.continuous = true;
+                    recognition.interimResults = true;
 
                     recognition.onstart = () => {
                         micBtn.classList.add('listening');
                         micBtn.textContent = '🛑';
                         questionInput.placeholder = 'Listening...';
+                        window.speechTranscript = '';
                     };
 
                     recognition.onresult = (e) => {
-                        const transcript = e.results[0][0].transcript;
-                        questionInput.value = transcript;
+                        let finalTrans = '';
+                        let interimTrans = '';
+                        for (let i = e.resultIndex; i < e.results.length; ++i) {
+                            if (e.results[i].isFinal) {
+                                finalTrans += e.results[i][0].transcript;
+                            } else {
+                                interimTrans += e.results[i][0].transcript;
+                            }
+                        }
+                        if (finalTrans) window.speechTranscript += finalTrans;
+                        questionInput.value = window.speechTranscript + interimTrans;
                         syncBtn();
-                        if (!askBtn.disabled) askBtn.click();
+                        
+                        // Auto-submit if final result is available and ready
+                        if (finalTrans && !askBtn.disabled) {
+                            askBtn.click();
+                            recognition.stop();
+                        }
                     };
 
                     recognition.onerror = (e) => {
