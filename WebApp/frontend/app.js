@@ -217,9 +217,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => imageInput.removeAttribute('capture'), 500);
         });
     }
-
-
-
     // ---- Navbar Scroll Effect ----
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
