@@ -935,8 +935,12 @@ body {
    Android App Specific Theme (Gemini Style)
    =================================================== */
 body.android-app {
-    background: linear-gradient(180deg, #ffffff 60%, #e8f0fe 100%);
+    background: linear-gradient(180deg, #ffffff 60%, #e8f0fe 100%) !important;
     color: #1f1f1f;
+}
+
+body.android-app .bg-blobs {
+    display: none !important;
 }
 
 body.android-app .navbar, 
@@ -1009,16 +1013,21 @@ body.android-app .mic-btn:hover {
 }
 
 body.android-app .ask-btn {
-    background: #e8f0fe;
-    color: #0b57d0;
+    display: flex !important;
+    background: #e8f0fe !important;
+    color: #0b57d0 !important;
     border-radius: 50%;
     width: 44px;
     height: 44px;
     padding: 0;
-    display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0; /* Hide text */
+}
+
+body.android-app .ask-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 body.android-app .ta-answer {
@@ -1028,6 +1037,10 @@ body.android-app .ta-answer {
 }
 
 body.android-app .img-view {
+    max-height: 40vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background: #ffffff;
     border: 1px solid #e0e0e0;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
@@ -1038,6 +1051,10 @@ body.android-app .img-view {
 }
 
 body.android-app #image-preview {
+    max-height: 25vh;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
     border-radius: 12px;
 }
 

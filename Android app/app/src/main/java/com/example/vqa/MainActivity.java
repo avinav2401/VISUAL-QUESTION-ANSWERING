@@ -11,7 +11,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.speech.RecognizerIntent;
+import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
+import java.util.ArrayList;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -38,6 +41,21 @@ public class MainActivity extends AppCompatActivity {
     private String mCameraPhotoPath;
     private static final int INPUT_FILE_REQUEST_CODE = 1;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
+    private static final int SPEECH_REQUEST_CODE = 1002;
+
+    public class WebAppInterface {
+        Activity mContext;
+        WebAppInterface(Activity c) {
+            mContext = c;
+        }
+        @JavascriptInterface
+        public void startSpeechRecognition() {
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...");
+            mContext.startActivityForResult(intent, SPEECH_REQUEST_CODE);
+        }
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -56,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setAllowUniversalAccessFromFileURLs(true);
         webSettings.setMediaPlaybackRequiresUserGesture(false);
         webSettings.setUserAgentString(webSettings.getUserAgentString() + " VQA-Android-App");
+        webView.addJavascriptInterface(new WebAppInterface(this), "AndroidApp");
 
         // Required to route absolute /api/ requests to the real backend in WebView if needed
         // But our app.js currently detects localhost and defaults to /api/.
@@ -156,6 +175,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (matches != null && matches.size() > 0) {
+                String text = matches.get(0);
+                webView.evaluateJavascript("javascript:if(window.onAndroidSpeechResult) window.onAndroidSpeechResult('" + text.replace("'", "\\'") + "');", null);
+            }
+            return;
+        }
+
         if (requestCode != INPUT_FILE_REQUEST_CODE || mFilePathCallback == null) {
             super.onActivityResult(requestCode, resultCode, data);
             return;

@@ -109,45 +109,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- Speech Recognition ----
     const micBtn = document.getElementById('mic-btn');
+    
+    // Exposed for Android Native Speech
+    window.onAndroidSpeechResult = function(text) {
+        questionInput.value = text;
+        syncBtn();
+        if (!askBtn.disabled) askBtn.click();
+    };
+
     if (micBtn) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRecognition) {
-            const recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-
-            recognition.onstart = () => {
-                micBtn.classList.add('listening');
-                micBtn.textContent = '🛑';
-                questionInput.placeholder = 'Listening...';
-            };
-
-            recognition.onresult = (e) => {
-                const transcript = e.results[0][0].transcript;
-                questionInput.value = transcript;
-                syncBtn();
-                if (!askBtn.disabled) askBtn.click();
-            };
-
-            recognition.onerror = (e) => {
-                console.error('Speech recognition error', e);
-                questionInput.placeholder = 'What is in this image?';
-            };
-
-            recognition.onend = () => {
-                micBtn.classList.remove('listening');
-                micBtn.textContent = '🎙️';
-                questionInput.placeholder = 'What is in this image?';
-            };
-
-            micBtn.addEventListener('click', () => {
+        
+        micBtn.addEventListener('click', () => {
+            if (window.AndroidApp) {
+                // Use Android Native
+                window.AndroidApp.startSpeechRecognition();
+                return;
+            }
+            
+            if (SpeechRecognition) {
                 if (micBtn.classList.contains('listening')) {
-                    recognition.stop();
+                    if (window.activeRecognition) window.activeRecognition.stop();
                 } else {
+                    const recognition = new SpeechRecognition();
+                    window.activeRecognition = recognition;
+                    recognition.continuous = false;
+                    recognition.interimResults = false;
+
+                    recognition.onstart = () => {
+                        micBtn.classList.add('listening');
+                        micBtn.textContent = '🛑';
+                        questionInput.placeholder = 'Listening...';
+                    };
+
+                    recognition.onresult = (e) => {
+                        const transcript = e.results[0][0].transcript;
+                        questionInput.value = transcript;
+                        syncBtn();
+                        if (!askBtn.disabled) askBtn.click();
+                    };
+
+                    recognition.onerror = (e) => {
+                        console.error('Speech recognition error', e);
+                        questionInput.placeholder = 'What is in this image?';
+                    };
+
+                    recognition.onend = () => {
+                        micBtn.classList.remove('listening');
+                        micBtn.textContent = '🎙️';
+                        questionInput.placeholder = 'What is in this image?';
+                    };
+
                     recognition.start();
                 }
-            });
-        } else {
+            }
+        });
+        
+        if (!window.AndroidApp && !SpeechRecognition) {
             micBtn.style.display = 'none'; // Not supported
         }
     }
