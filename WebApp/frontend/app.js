@@ -1,13 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Detect Android App
-    if (navigator.userAgent.includes("VQA-Android-App")) {
-        document.body.classList.add('android-app');
-        const imgView = document.getElementById('img-view');
-        const rightHeader = document.querySelector('.right-header');
-        if (imgView && rightHeader) {
-            rightHeader.parentNode.insertBefore(imgView, rightHeader);
-        }
-    }
+    // Android app styling overrides removed.
+    // The APK will use the same Web UI exactly.
 
     const imageInput    = document.getElementById('image-input');
     const attachBtn     = document.getElementById('browse-btn');
@@ -233,8 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
             let apiUrl = '/api/predict';
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                 apiUrl = 'http://localhost:8000/predict';
-            } else if (document.body.classList.contains('android-app')) {
-                apiUrl = 'https://answering-three.vercel.app/api/predict';
+            } else if (navigator.userAgent.includes("VQA-Android-App")) {
+                apiUrl = 'https://avinavpri-vqa-backend.hf.space/predict';
             }
 
             const res = await fetch(apiUrl, { method: 'POST', body: form });
