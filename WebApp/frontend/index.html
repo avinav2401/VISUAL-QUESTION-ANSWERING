@@ -144,6 +144,9 @@
                     placeholder="What is in this image?"
                     autocomplete="off"
                 >
+                <button id="mic-btn" class="mic-btn" aria-label="Speak question" title="Speak question">
+                    🎙️
+                </button>
                 <button id="ask-btn" class="ask-btn" disabled>
                     Ask AI
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -177,7 +180,10 @@
             <!-- Results -->
             <div class="state-results hidden" id="results-state">
                 <div class="top-answer-block">
-                    <span class="ta-label">Best Answer</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span class="ta-label" style="margin-bottom: 0;">Best Answer</span>
+                        <button id="tts-toggle-btn" class="tts-btn" aria-label="Toggle Text-to-Speech" title="Disable Read out loud">🔊</button>
+                    </div>
                     <div class="ta-answer" id="top-answer-text"></div>
                     <div class="ta-conf" id="confidence-value"></div>
                 </div>

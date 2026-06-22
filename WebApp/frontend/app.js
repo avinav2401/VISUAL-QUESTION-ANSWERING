@@ -94,7 +94,66 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ---- Ask AI ----
+    // ---- Speech Recognition ----
+    const micBtn = document.getElementById('mic-btn');
+    if (micBtn) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                micBtn.classList.add('listening');
+                micBtn.textContent = '🛑';
+                questionInput.placeholder = 'Listening...';
+            };
+
+            recognition.onresult = (e) => {
+                const transcript = e.results[0][0].transcript;
+                questionInput.value = transcript;
+                syncBtn();
+                if (!askBtn.disabled) askBtn.click();
+            };
+
+            recognition.onerror = (e) => {
+                console.error('Speech recognition error', e);
+                questionInput.placeholder = 'What is in this image?';
+            };
+
+            recognition.onend = () => {
+                micBtn.classList.remove('listening');
+                micBtn.textContent = '🎙️';
+                questionInput.placeholder = 'What is in this image?';
+            };
+
+            micBtn.addEventListener('click', () => {
+                if (micBtn.classList.contains('listening')) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                }
+            });
+        } else {
+            micBtn.style.display = 'none'; // Not supported
+        }
+    }
+
+        // ---- TTS Toggle ----
+        let isTtsEnabled = true;
+        const ttsToggleBtn = document.getElementById('tts-toggle-btn');
+        if (ttsToggleBtn) {
+            ttsToggleBtn.addEventListener('click', () => {
+                isTtsEnabled = !isTtsEnabled;
+                ttsToggleBtn.textContent = isTtsEnabled ? '🔊' : '🔇';
+                ttsToggleBtn.title = isTtsEnabled ? 'Disable Read out loud' : 'Enable Read out loud';
+                if (!isTtsEnabled && 'speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                }
+            });
+        }
+    
+        // ---- Ask AI ----
     askBtn.addEventListener('click', async () => {
         if (!selectedFile || !questionInput.value.trim()) return;
 
@@ -142,6 +201,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         topAnswerEl.textContent = top.answer;
         confValueEl.textContent = topPct + '%';
+
+        // Read out loud
+        if (isTtsEnabled && 'speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // cancel any ongoing speech
+            const utterance = new SpeechSynthesisUtterance(`The best answer is ${top.answer}`);
+            window.speechSynthesis.speak(utterance);
+        }
 
         // Others
         otherListEl.innerHTML = '';
