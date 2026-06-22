@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://avinavpri-vqa-backend.hf.space/$1"
+    }
+  ]
+}
