@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setAllowFileAccessFromFileURLs(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
         webSettings.setMediaPlaybackRequiresUserGesture(false);
+        webSettings.setUserAgentString(webSettings.getUserAgentString() + " VQA-Android-App");
 
         // Required to route absolute /api/ requests to the real backend in WebView if needed
         // But our app.js currently detects localhost and defaults to /api/.

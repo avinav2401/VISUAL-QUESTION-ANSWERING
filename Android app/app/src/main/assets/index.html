@@ -113,6 +113,18 @@
                 </div>
             </div>
 
+
+        </div>
+
+        <!-- Right: Question + Answer -->
+        <div class="right-col">
+
+            <!-- Gemini Greeting (Android App Only) -->
+            <div class="gemini-greeting" style="display: none;">
+                <div class="gemini-star">✨</div>
+                <h2 id="gemini-title">Where should we start?</h2>
+            </div>
+
             <!-- Image Preview (shown after upload) -->
             <div class="img-view hidden" id="img-view">
                 <img id="image-preview" alt="Uploaded image">
@@ -124,10 +136,6 @@
                     Change image
                 </button>
             </div>
-        </div>
-
-        <!-- Right: Question + Answer -->
-        <div class="right-col">
 
             <!-- Header -->
             <div class="right-header">
@@ -144,6 +152,9 @@
                     placeholder="What is in this image?"
                     autocomplete="off"
                 >
+                <button id="mobile-upload-btn" class="mic-btn gemini-upload-btn" style="display: none;" aria-label="Upload Image" title="Upload Image" onclick="document.getElementById('image-input').click()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                </button>
                 <button id="tts-toggle-btn" class="mic-btn" aria-label="Toggle Text-to-Speech" title="Disable Read out loud">
                     🔊
                 </button>

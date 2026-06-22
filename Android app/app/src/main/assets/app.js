@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Detect Android App
+    if (navigator.userAgent.includes("VQA-Android-App")) {
+        document.body.classList.add('android-app');
+    }
+
     const imageInput    = document.getElementById('image-input');
     const attachBtn     = document.getElementById('browse-btn');
     const imgPlaceholder= document.getElementById('drop-zone');
@@ -17,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const topAnswerEl   = document.getElementById('top-answer-text');
     const confValueEl   = document.getElementById('confidence-value');
     const otherListEl   = document.getElementById('other-list');
+    
+    const geminiGreeting = document.querySelector('.gemini-greeting');
 
     let selectedFile = null;
 
@@ -52,6 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
         imageInput.value = '';
         imgPreviewWrap.classList.add('hidden');
         imgPlaceholder.classList.remove('hidden');
+        if (geminiGreeting && document.body.classList.contains('android-app')) {
+            geminiGreeting.style.display = 'flex';
+        }
         syncBtn();
     });
 
@@ -74,9 +84,12 @@ document.addEventListener('DOMContentLoaded', () => {
             imagePreview.src = ev.target.result;
             imgPlaceholder.classList.add('hidden');
             imgPreviewWrap.classList.remove('hidden');
+            if (geminiGreeting && document.body.classList.contains('android-app')) {
+                geminiGreeting.style.display = 'none';
+            }
+            syncBtn();
         };
         reader.readAsDataURL(file);
-        syncBtn();
     }
 
     // ---- Question input ----
