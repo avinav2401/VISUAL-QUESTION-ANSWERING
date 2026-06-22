@@ -1,242 +1,278 @@
 package com.example.vqa;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
-import android.webkit.JavascriptInterface;
-import android.webkit.PermissionRequest;
-import java.util.ArrayList;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.util.Base64;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private WebView webView;
-    private ValueCallback<Uri[]> mFilePathCallback;
-    private String mCameraPhotoPath;
-    private static final int INPUT_FILE_REQUEST_CODE = 1;
-    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
-    private static final int SPEECH_REQUEST_CODE = 1002;
+    private ImageView ivPreview;
+    private TextView tvDropText, tvFormats, tvAnswer;
+    private Button btnBrowse, btnCamera, btnSubmit;
+    private EditText etQuestion;
+    private ImageButton btnMic;
+    private ProgressBar progressBar;
+    private TextView chip1, chip2, chip3;
 
-    public class WebAppInterface {
-        Activity mContext;
-        WebAppInterface(Activity c) {
-            mContext = c;
-        }
-        @JavascriptInterface
-        public void startSpeechRecognition() {
-            mContext.runOnUiThread(() -> {
-                try {
-                    Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                    intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...");
-                    mContext.startActivityForResult(intent, SPEECH_REQUEST_CODE);
-                } catch (Exception e) {
-                    webView.evaluateJavascript("alert('Speech Recognition is not installed or supported on this device.');", null);
-                }
-            });
-        }
-    }
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int GALLERY_REQUEST_CODE = 101;
+    private static final int SPEECH_REQUEST_CODE = 102;
+    private static final int PERMISSION_REQUEST_CODE = 103;
 
-    @SuppressLint("SetJavaScriptEnabled")
+    private String currentPhotoPath;
+    private Uri currentImageUri;
+    private Bitmap currentBitmap;
+
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .build();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        webView = findViewById(R.id.webview);
+        ivPreview = findViewById(R.id.ivPreview);
+        tvDropText = findViewById(R.id.tvDropText);
+        tvFormats = findViewById(R.id.tvFormats);
+        tvAnswer = findViewById(R.id.tvAnswer);
+        btnBrowse = findViewById(R.id.btnBrowse);
+        btnCamera = findViewById(R.id.btnCamera);
+        btnSubmit = findViewById(R.id.btnSubmit);
+        etQuestion = findViewById(R.id.etQuestion);
+        btnMic = findViewById(R.id.btnMic);
+        progressBar = findViewById(R.id.progressBar);
 
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setAllowFileAccess(true);
-        webSettings.setAllowContentAccess(true);
-        webSettings.setAllowFileAccessFromFileURLs(true);
-        webSettings.setAllowUniversalAccessFromFileURLs(true);
-        webSettings.setMediaPlaybackRequiresUserGesture(false);
-        webSettings.setUserAgentString(webSettings.getUserAgentString() + " VQA-Android-App");
-        webView.addJavascriptInterface(new WebAppInterface(this), "AndroidApp");
+        chip1 = findViewById(R.id.chip1);
+        chip2 = findViewById(R.id.chip2);
+        chip3 = findViewById(R.id.chip3);
 
-        // Required to route absolute /api/ requests to the real backend in WebView if needed
-        // But our app.js currently detects localhost and defaults to /api/.
-        // We will modify app.js slightly in the assets folder to hardcode the HF URL.
+        checkPermissions();
 
-        webView.setWebViewClient(new WebViewClient());
+        btnBrowse.setOnClickListener(v -> openGallery());
+        btnCamera.setOnClickListener(v -> openCamera());
+        btnMic.setOnClickListener(v -> startSpeechRecognition());
 
-        webView.setWebChromeClient(new WebChromeClient() {
-            // For Android 5.0+
-            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams) {
-                if (mFilePathCallback != null) {
-                    mFilePathCallback.onReceiveValue(null);
-                }
-                mFilePathCallback = filePathCallback;
+        btnSubmit.setOnClickListener(v -> submitQuestion());
 
-                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
-                    return true;
-                }
-
-                launchImagePicker();
-                return true;
+        View.OnClickListener chipListener = v -> {
+            TextView t = (TextView) v;
+            etQuestion.setText(t.getText().toString());
+            if (currentBitmap != null) {
+                submitQuestion();
+            } else {
+                Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show();
             }
+        };
 
-            @Override
-            public void onPermissionRequest(final PermissionRequest request) {
-                request.grant(request.getResources());
-            }
-        });
+        chip1.setOnClickListener(chipListener);
+        chip2.setOnClickListener(chipListener);
+        chip3.setOnClickListener(chipListener);
+    }
 
-        // Load the local HTML file
-        webView.loadUrl("file:///android_asset/index.html");
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA}, 101);
-            }
+    private void checkPermissions() {
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUEST_CODE);
         }
     }
 
-    private void launchImagePicker() {
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, GALLERY_REQUEST_CODE);
+    }
+
+    private void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
             try {
                 photoFile = createImageFile();
-                takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
             } catch (IOException ex) {
-                // Error occurred while creating the File
+                ex.printStackTrace();
             }
-
             if (photoFile != null) {
-                mCameraPhotoPath = "file:" + photoFile.getAbsolutePath();
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.vqa.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-            } else {
-                takePictureIntent = null;
+                startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
             }
         }
-
-        Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
-        contentSelectionIntent.setType("image/*");
-
-        Intent[] intentArray;
-        if (takePictureIntent != null) {
-            intentArray = new Intent[]{takePictureIntent};
-        } else {
-            intentArray = new Intent[0];
-        }
-
-        Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
-        chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
-        chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
-
-        startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                launchImagePicker();
-            } else {
-                Toast.makeText(this, "Camera permission is required to take photos", Toast.LENGTH_SHORT).show();
-                if (mFilePathCallback != null) {
-                    mFilePathCallback.onReceiveValue(null);
-                    mFilePathCallback = null;
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            if (matches != null && matches.size() > 0) {
-                String text = matches.get(0);
-                try {
-                    String js = "javascript:if(window.onAndroidSpeechResult) window.onAndroidSpeechResult(" + org.json.JSONObject.quote(text) + ");";
-                    webView.evaluateJavascript(js, null);
-                } catch (Exception e) {}
-            }
-            return;
-        }
-
-        if (requestCode != INPUT_FILE_REQUEST_CODE || mFilePathCallback == null) {
-            super.onActivityResult(requestCode, resultCode, data);
-            return;
-        }
-
-        Uri[] results = null;
-
-        if (resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                // If there is not data, then we may have taken a photo
-                if (mCameraPhotoPath != null) {
-                    results = new Uri[]{Uri.parse(mCameraPhotoPath)};
-                }
-            } else {
-                String dataString = data.getDataString();
-                if (dataString != null) {
-                    results = new Uri[]{Uri.parse(dataString)};
-                } else if (mCameraPhotoPath != null) {
-                    results = new Uri[]{Uri.parse(mCameraPhotoPath)};
-                }
-            }
-        }
-
-        mFilePathCallback.onReceiveValue(results);
-        mFilePathCallback = null;
     }
 
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        return File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void startSpeechRecognition() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Ask about your image...");
+        try {
+            startActivityForResult(intent, SPEECH_REQUEST_CODE);
+        } catch (Exception e) {
+            Toast.makeText(this, "Speech recognition not supported", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
-    public void onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack();
-        } else {
-            super.onBackPressed();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == GALLERY_REQUEST_CODE && data != null) {
+                currentImageUri = data.getData();
+                loadImageFromUri(currentImageUri);
+            } else if (requestCode == CAMERA_REQUEST_CODE) {
+                File f = new File(currentPhotoPath);
+                currentImageUri = Uri.fromFile(f);
+                loadImageFromUri(currentImageUri);
+            } else if (requestCode == SPEECH_REQUEST_CODE && data != null) {
+                ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                if (matches != null && !matches.isEmpty()) {
+                    etQuestion.setText(matches.get(0));
+                    if (currentBitmap != null) {
+                        submitQuestion();
+                    }
+                }
+            }
         }
+    }
+
+    private void loadImageFromUri(Uri uri) {
+        try {
+            InputStream is = getContentResolver().openInputStream(uri);
+            currentBitmap = BitmapFactory.decodeStream(is);
+            ivPreview.setImageBitmap(currentBitmap);
+            tvDropText.setVisibility(View.GONE);
+            tvFormats.setVisibility(View.GONE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void submitQuestion() {
+        String question = etQuestion.getText().toString().trim();
+        if (currentBitmap == null) {
+            Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (question.isEmpty()) {
+            Toast.makeText(this, "Please ask a question", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        tvAnswer.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        btnSubmit.setEnabled(false);
+
+        new Thread(() -> {
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                currentBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+                byte[] imageBytes = baos.toByteArray();
+
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("question", question)
+                        .addFormDataPart("file", "image.jpg",
+                                RequestBody.create(imageBytes, MediaType.parse("image/jpeg")))
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url("https://avinavpri-vqa-backend.hf.space/predict")
+                        .post(requestBody)
+                        .build();
+
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        runOnUiThread(() -> {
+                            progressBar.setVisibility(View.GONE);
+                            btnSubmit.setEnabled(true);
+                            tvAnswer.setText("Error: " + e.getMessage());
+                            tvAnswer.setVisibility(View.VISIBLE);
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        String respStr = response.body().string();
+                        runOnUiThread(() -> {
+                            progressBar.setVisibility(View.GONE);
+                            btnSubmit.setEnabled(true);
+                            try {
+                                if (response.isSuccessful()) {
+                                    JSONObject json = new JSONObject(respStr);
+                                    String answer = json.getString("answer");
+                                    tvAnswer.setText(answer);
+                                } else {
+                                    tvAnswer.setText("Server Error: " + response.code());
+                                }
+                            } catch (JSONException e) {
+                                tvAnswer.setText("Failed to parse response");
+                            }
+                            tvAnswer.setVisibility(View.VISIBLE);
+                        });
+                    }
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    progressBar.setVisibility(View.GONE);
+                    btnSubmit.setEnabled(true);
+                    Toast.makeText(MainActivity.this, "Error processing image", Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
     }
 }
