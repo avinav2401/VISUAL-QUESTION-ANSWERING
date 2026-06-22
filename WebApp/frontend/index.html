@@ -130,9 +130,12 @@
         <div class="right-col">
 
             <!-- Header -->
-            <div class="right-header">
-                <h1 class="right-title">Ask AI anything<br>about your image</h1>
-                <p class="right-sub">Powered by ViLT Vision-Language Transformer</p>
+            <div class="right-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h1 class="right-title">Ask AI anything<br>about your image</h1>
+                    <p class="right-sub">Powered by ViLT Vision-Language Transformer</p>
+                </div>
+                <button id="tts-toggle-btn" class="tts-btn" style="font-size: 1.4rem; padding: 8px; margin-top: 4px;" aria-label="Toggle Text-to-Speech" title="Disable Read out loud">🔊</button>
             </div>
 
             <!-- Question input -->
@@ -180,10 +183,7 @@
             <!-- Results -->
             <div class="state-results hidden" id="results-state">
                 <div class="top-answer-block">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span class="ta-label" style="margin-bottom: 0;">Best Answer</span>
-                        <button id="tts-toggle-btn" class="tts-btn" aria-label="Toggle Text-to-Speech" title="Disable Read out loud">🔊</button>
-                    </div>
+                    <span class="ta-label">Best Answer</span>
                     <div class="ta-answer" id="top-answer-text"></div>
                     <div class="ta-conf" id="confidence-value"></div>
                 </div>
