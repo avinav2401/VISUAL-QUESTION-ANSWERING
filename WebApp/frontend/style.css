@@ -889,9 +889,9 @@ body {
     .right-sub { font-size: 0.72rem; }
     .ta-answer { font-size: 1.5rem; }
 
-    /* Chips scroll horizontally */
-    .chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
-    .chip { flex-shrink: 0; }
+    /* Chips wrap on mobile */
+    .chips { flex-wrap: wrap; justify-content: center; overflow-x: visible; padding-bottom: 4px; }
+    .chip { flex-shrink: 1; }
 
     /* Sticky Question Box */
     .ask-btn { 
