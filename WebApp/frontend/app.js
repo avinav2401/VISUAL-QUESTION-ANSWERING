@@ -159,4 +159,73 @@ document.addEventListener('DOMContentLoaded', () => {
         // Smooth scroll to results
         resultsState.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    // ---- Hamburger Menu ----
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const navLinks     = document.getElementById('nav-links');
+
+    hamburgerBtn.addEventListener('click', () => {
+        hamburgerBtn.classList.toggle('open');
+        navLinks.classList.toggle('open');
+    });
+
+    // Close menu when a nav link is clicked
+    navLinks.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburgerBtn.classList.remove('open');
+            navLinks.classList.remove('open');
+        });
+    });
+
+    // ---- About Modal ----
+    const aboutModal   = document.getElementById('about-modal');
+    const aboutBtn     = document.getElementById('nav-about');
+    const closeModalBtn= document.getElementById('modal-close-btn');
+
+    aboutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        aboutModal.classList.remove('hidden');
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        aboutModal.classList.add('hidden');
+    });
+
+    // Close modal on overlay click
+    aboutModal.addEventListener('click', (e) => {
+        if (e.target === aboutModal) aboutModal.classList.add('hidden');
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !aboutModal.classList.contains('hidden')) {
+            aboutModal.classList.add('hidden');
+        }
+    });
+
+    // ---- Camera Button ----
+    const cameraBtn = document.getElementById('camera-btn');
+    if (cameraBtn) {
+        cameraBtn.addEventListener('click', () => {
+            // On mobile this opens camera; on desktop it opens file picker
+            imageInput.setAttribute('capture', 'environment');
+            imageInput.click();
+            // Remove capture attribute after so browse-btn still opens file picker
+            setTimeout(() => imageInput.removeAttribute('capture'), 500);
+        });
+    }
+
+    // Make browse-btn always open file picker (no capture)
+    attachBtn.removeEventListener('click', () => imageInput.click());
+    attachBtn.addEventListener('click', () => {
+        imageInput.removeAttribute('capture');
+        imageInput.click();
+    });
+
+    // ---- Navbar Scroll Effect ----
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 10);
+    });
+
 });
