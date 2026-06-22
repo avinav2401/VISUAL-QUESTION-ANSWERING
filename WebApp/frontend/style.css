@@ -889,19 +889,21 @@ body {
     .right-sub { font-size: 0.72rem; }
     .ta-answer { font-size: 1.5rem; }
 
-    /* Chips scroll horizontally on mobile without visible scrollbar */
+    /* Chips as a neat 2-column grid on mobile */
     .chips { 
-        flex-wrap: nowrap; 
-        overflow-x: auto; 
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
         padding-bottom: 4px; 
-        -webkit-overflow-scrolling: touch; 
-        scrollbar-width: none; 
-        -ms-overflow-style: none; 
     }
-    .chips::-webkit-scrollbar {
-        display: none;
+    .chip { 
+        width: 100%;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 8px 10px;
     }
-    .chip { flex-shrink: 0; }
 
     /* Sticky Question Box */
     .ask-btn { 
