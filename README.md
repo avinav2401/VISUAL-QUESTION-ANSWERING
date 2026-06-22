@@ -14,7 +14,7 @@ Welcome to the **Visual Question Answering (VQA)** project. This repository repr
 
 > [!NOTE]
 > **Accessibility First**
-> At its core, this project is an accessibility initiative. By giving machines the ability to describe and answer questions about the visual world, we create powerful tools for the visually impaired, allowing them to interact with their surroundings through a seamless, voice-driven interface.
+> At its core, this project is an accessibility initiative. By giving machines the ability to describe and answer questions about the visual world, we create powerful tools for the visually impaired, allowing them to interact with their surroundings through a seamless interface.
 
 ---
 
@@ -22,48 +22,37 @@ Welcome to the **Visual Question Answering (VQA)** project. This repository repr
 
 The human brain processes the world through multiple modalities simultaneously. When we see a scene, we don't just register pixel values; we extract semantic meaning. When we hear a question, we map those words to our conceptual understanding of the world. 
 
-This project aims to replicate that dual-processing capability, featuring two distinct deployments tailored for specific environments:
+This project aims to replicate that dual-processing capability, featuring a unified architecture that provides state-of-the-art accuracy across all platforms:
 
 | Context | Environment | Focus |
 |:---|:---|:---|
-| 📱 **The Edge** | Android App | Designed for extreme portability and offline capability, assisting visually impaired users in real-time. |
+| 📱 **The Edge** | Android App | Designed for portability, wrapping the modern web UI in a lightweight native container that accesses the powerful cloud models. |
 | ☁️ **The Cloud** | Web App | Built for unrestricted computational power, leveraging state-of-the-art transformer architectures for complex reasoning. |
 
 ---
 
-## ⚙️ System Architectures
+## ⚙️ System Architecture (Vision-and-Language Transformer)
 
-To accommodate both edge and cloud environments, this repository implements two entirely different architectural paradigms.
+To provide the highest possible accuracy and a unified user experience, both the Android and Web platforms now utilize a single, powerful cloud architecture.
 
-### 1. The Mobile Edge Architecture (CNN + LSTM Fusion)
-*Deployed on Android via TensorFlow Lite*
+### The ViLT Architecture
+*Deployed on Hugging Face Spaces via FastAPI and PyTorch*
 
-For the mobile application, efficiency and offline availability are paramount. We utilize a classic dual-encoder strategy. 
-
-```mermaid
-graph TD
-    A[Raw Image] -->|Resize & Normalize| B(VGG-16 CNN)
-    C[Spoken Question] -->|Speech-to-Text & Tokenize| D(LSTM Network)
-    
-    B -->|Spatial Feature Maps| E[Image Embedding 1024-dim]
-    D -->|Temporal Sequence| F[Text Embedding 1024-dim]
-    
-    E --> G((Element-wise Multiplication))
-    F --> G
-    
-    G --> H[Dense Layer + Dropout]
-    H --> I[Softmax Classifier]
-    I -->|Text-to-Speech| J[Spoken Answer]
-```
-
-### 2. The Cloud Architecture (Vision-and-Language Transformer)
-*Deployed on the Web via FastAPI and PyTorch*
-
-The web interface utilizes the **ViLT (Vision-and-Language Transformer)** model. Unlike the edge architecture which processes vision and language separately before merging them, ViLT tokenizes both the image patches and the text tokens directly into a single, massive transformer network.
+The system utilizes the **ViLT (Vision-and-Language Transformer)** model. ViLT tokenizes both the image patches and the text tokens directly into a single, massive transformer network.
 
 - **Image Processing:** Patch-based visual embeddings without the need for heavy CNN feature extractors.
 - **Text Processing:** BERT-style subword tokenization.
-- **Inference:** HuggingFace `vilt-b32-finetuned-vqa` weights provide high-accuracy, zero-shot-like capabilities on complex, unseen grammatical structures.
+- **Inference:** Hugging Face `vilt-b32-finetuned-vqa` weights provide high-accuracy, zero-shot-like capabilities on complex, unseen grammatical structures.
+
+```mermaid
+graph TD
+    A[Image] --> B[ViLT Transformer Server]
+    C[Question] --> B
+    B --> D[Synthesized Answer]
+    
+    E[Web Browser] --> |API Request| B
+    F[Android App WebView] --> |API Request| B
+```
 
 ---
 
@@ -73,15 +62,15 @@ The repository is modularly structured to separate the training environments fro
 
 | Directory | Purpose | Contents |
 |:---|:---|:---|
-| 📓 **`/Model`** | The research and training nexus. | Jupyter notebooks detailing data preprocessing, vocabulary generation, training, and `.tflite` conversion. |
-| 📱 **`/Android app`** | The native mobile application workspace. | Java-based source code, Android manifest, layout XMLs, and offline AI assets for accessibility-driven inference. |
+| 📓 **`/Model`** | The research and training nexus. | Jupyter notebooks detailing data preprocessing and legacy model generation. |
+| 📱 **`/Android app`** | The native mobile application workspace. | A lightweight Android WebView wrapper that hosts the frontend UI locally and connects to the cloud backend. |
 | 🌐 **`/WebApp`** | The full-stack web portal. | The `backend/` runs the FastAPI inference server, while the `frontend/` provides a highly responsive, animated, vanilla web interface. |
 
 ---
 
 ## 🚀 Deployment & Setup Guide
 
-### 🌐 Running the Web Platform
+### 🌐 Running the Web Platform Locally
 Ensure you have **Python 3.10+** installed.
 
 ```bash
@@ -100,20 +89,18 @@ python main.py
 
 <br>
 
-### ☁️ Cloud Deployment (Vercel & Render)
+### ☁️ Cloud Deployment (Vercel & Hugging Face)
 
 The Web Platform is fully configured for cloud deployment:
 
-1. **Backend (Render)**:
-   - Connect your GitHub repository to [Render](https://render.com).
-   - Render will automatically detect the `render.yaml` configuration file and deploy the FastAPI backend.
-   - Once deployed, copy your Render backend URL (e.g., `https://vqa-backend.onrender.com`).
+1. **Backend (Hugging Face Spaces)**:
+   - Create a new Hugging Face Space using the Docker template.
+   - Upload the contents of `WebApp/backend`.
+   - The FastAPI server will automatically install dependencies and expose the `/predict` endpoint.
 
 2. **Frontend (Vercel)**:
-   - Update the `vercel.json` file in `WebApp/frontend` by replacing `<YOUR-RENDER-BACKEND-URL>` with your actual Render application name.
-   - Deploy the repository to [Vercel](https://vercel.com).
-   - Go to your Vercel project settings and set the **Root Directory** to `WebApp/frontend`.
-   - Vercel will host the frontend and proxy all API requests securely to your Render backend.
+   - Update the `vercel.json` file in `WebApp/frontend` to route `/api/*` to your Hugging Face Space URL.
+   - Deploy the repository to [Vercel](https://vercel.com) and set the **Root Directory** to `WebApp/frontend`.
 
 <br>
 
@@ -123,10 +110,10 @@ Ensure you have the latest version of **Android Studio** installed.
 1. Launch Android Studio and select **"Open an existing project"**.
 2. Navigate to and select the `Android app/` folder in this repository.
 3. Allow the Gradle build system to resolve and sync all dependencies.
-4. Connect a physical Android device and click **Run**.
+4. Connect a physical Android device and click **Run** to compile the lightweight APK.
 
 > [!WARNING]
-> We strongly recommend a **physical Android device** over an emulator to ensure full camera and microphone hardware support for the accessibility features.
+> We strongly recommend a **physical Android device** over an emulator to ensure full camera hardware support for taking pictures of your surroundings.
 
 ---
 
