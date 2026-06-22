@@ -491,19 +491,7 @@ body {
     margin-bottom: 8px;
 }
 
-.tts-btn {
-    background: none;
-    border: none;
-    color: rgba(255,255,255,0.6);
-    font-size: 1.15rem;
-    cursor: pointer;
-    transition: transform 0.2s ease, color 0.2s ease;
-    padding: 2px;
-}
-.tts-btn:hover {
-    transform: scale(1.15);
-    color: #fff;
-}
+
 
 .ta-answer {
     font-size: 2.2rem;

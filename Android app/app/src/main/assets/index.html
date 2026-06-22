@@ -130,12 +130,9 @@
         <div class="right-col">
 
             <!-- Header -->
-            <div class="right-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <h1 class="right-title">Ask AI anything<br>about your image</h1>
-                    <p class="right-sub">Powered by ViLT Vision-Language Transformer</p>
-                </div>
-                <button id="tts-toggle-btn" class="tts-btn" style="font-size: 1.4rem; padding: 8px; margin-top: 4px;" aria-label="Toggle Text-to-Speech" title="Disable Read out loud">🔊</button>
+            <div class="right-header">
+                <h1 class="right-title">Ask AI anything<br>about your image</h1>
+                <p class="right-sub">Powered by ViLT Vision-Language Transformer</p>
             </div>
 
             <!-- Question input -->
@@ -147,6 +144,9 @@
                     placeholder="What is in this image?"
                     autocomplete="off"
                 >
+                <button id="tts-toggle-btn" class="mic-btn" aria-label="Toggle Text-to-Speech" title="Disable Read out loud">
+                    🔊
+                </button>
                 <button id="mic-btn" class="mic-btn" aria-label="Speak question" title="Speak question">
                     🎙️
                 </button>
