@@ -100,6 +100,23 @@ python main.py
 
 <br>
 
+### ☁️ Cloud Deployment (Vercel & Render)
+
+The Web Platform is fully configured for cloud deployment:
+
+1. **Backend (Render)**:
+   - Connect your GitHub repository to [Render](https://render.com).
+   - Render will automatically detect the `render.yaml` configuration file and deploy the FastAPI backend.
+   - Once deployed, copy your Render backend URL (e.g., `https://vqa-backend.onrender.com`).
+
+2. **Frontend (Vercel)**:
+   - Update the `vercel.json` file in `WebApp/frontend` by replacing `<YOUR-RENDER-BACKEND-URL>` with your actual Render application name.
+   - Deploy the repository to [Vercel](https://vercel.com).
+   - Go to your Vercel project settings and set the **Root Directory** to `WebApp/frontend`.
+   - Vercel will host the frontend and proxy all API requests securely to your Render backend.
+
+<br>
+
 ### 📱 Running the Android Application
 Ensure you have the latest version of **Android Studio** installed.
 

@@ -104,7 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
             form.append('image', selectedFile);
             form.append('question', question);
 
-            const res = await fetch('http://localhost:8000/predict', { method: 'POST', body: form });
+            const apiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                ? 'http://localhost:8000/predict'
+                : '/api/predict';
+
+            const res = await fetch(apiUrl, { method: 'POST', body: form });
 
             if (!res.ok) {
                 const err = await res.json().catch(() => null);
