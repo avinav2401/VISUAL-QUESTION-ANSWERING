@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://<YOUR-RENDER-BACKEND-URL>.onrender.com/$1"
+      "destination": "https://<YOUR-HF-SPACE-NAME>.hf.space/$1"
     }
   ]
 }
