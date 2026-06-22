@@ -234,9 +234,12 @@ document.addEventListener('DOMContentLoaded', () => {
             form.append('image', selectedFile);
             form.append('question', question);
 
-            const apiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-                ? 'http://localhost:8000/predict'
-                : '/api/predict';
+            let apiUrl = '/api/predict';
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                apiUrl = 'http://localhost:8000/predict';
+            } else if (document.body.classList.contains('android-app')) {
+                apiUrl = 'https://answering-three.vercel.app/api/predict';
+            }
 
             const res = await fetch(apiUrl, { method: 'POST', body: form });
 
