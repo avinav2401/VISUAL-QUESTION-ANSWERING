@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
@@ -52,9 +53,12 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvDropText, tvFormats, tvAnswer;
     private Button btnBrowse, btnCamera, btnSubmit;
     private EditText etQuestion;
-    private ImageButton btnMic;
+    private ImageButton btnMic, btnTts;
     private ProgressBar progressBar;
     private TextView chip1, chip2, chip3;
+
+    private TextToSpeech textToSpeech;
+    private String lastAnswer = "";
 
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int GALLERY_REQUEST_CODE = 101;
@@ -96,6 +100,18 @@ public class MainActivity extends AppCompatActivity {
         btnBrowse.setOnClickListener(v -> openGallery());
         btnCamera.setOnClickListener(v -> openCamera());
         btnMic.setOnClickListener(v -> startSpeechRecognition());
+        
+        btnTts = findViewById(R.id.btnTts);
+        textToSpeech = new TextToSpeech(this, status -> {
+            if (status != TextToSpeech.ERROR) {
+                textToSpeech.setLanguage(Locale.US);
+            }
+        });
+        btnTts.setOnClickListener(v -> {
+            if (!lastAnswer.isEmpty()) {
+                textToSpeech.speak(lastAnswer, TextToSpeech.QUEUE_FLUSH, null, null);
+            }
+        });
 
         btnSubmit.setOnClickListener(v -> submitQuestion());
 
@@ -191,7 +207,22 @@ public class MainActivity extends AppCompatActivity {
     private void loadImageFromUri(Uri uri) {
         try {
             InputStream is = getContentResolver().openInputStream(uri);
-            currentBitmap = BitmapFactory.decodeStream(is);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(is, null, options);
+            is.close();
+            
+            int scale = 1;
+            while (options.outWidth / scale / 2 >= 800 && options.outHeight / scale / 2 >= 800) {
+                scale *= 2;
+            }
+            
+            BitmapFactory.Options scaleOptions = new BitmapFactory.Options();
+            scaleOptions.inSampleSize = scale;
+            is = getContentResolver().openInputStream(uri);
+            currentBitmap = BitmapFactory.decodeStream(is, null, scaleOptions);
+            is.close();
+            
             ivPreview.setImageBitmap(currentBitmap);
             tvDropText.setVisibility(View.GONE);
             tvFormats.setVisibility(View.GONE);
@@ -225,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("question", question)
-                        .addFormDataPart("file", "image.jpg",
+                        .addFormDataPart("image", "image.jpg",
                                 RequestBody.create(imageBytes, MediaType.parse("image/jpeg")))
                         .build();
 
@@ -254,13 +285,16 @@ public class MainActivity extends AppCompatActivity {
                             try {
                                 if (response.isSuccessful()) {
                                     JSONObject json = new JSONObject(respStr);
-                                    String answer = json.getString("answer");
+                                    String answer = json.getJSONArray("predictions").getJSONObject(0).getString("answer");
+                                    lastAnswer = answer;
                                     tvAnswer.setText(answer);
+                                    btnTts.setVisibility(View.VISIBLE);
+                                    textToSpeech.speak(answer, TextToSpeech.QUEUE_FLUSH, null, null);
                                 } else {
                                     tvAnswer.setText("Server Error: " + response.code());
                                 }
                             } catch (JSONException e) {
-                                tvAnswer.setText("Failed to parse response");
+                                tvAnswer.setText("Failed to parse response: " + respStr);
                             }
                             tvAnswer.setVisibility(View.VISIBLE);
                         });
@@ -274,5 +308,14 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+    
+    @Override
+    protected void onDestroy() {
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
+        super.onDestroy();
     }
 }
