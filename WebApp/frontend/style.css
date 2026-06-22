@@ -612,7 +612,7 @@ body {
 }
 
 .camera-btn {
-    display: flex;
+    display: none;
     align-items: center;
     gap: 7px;
     padding: 10px 20px;
@@ -851,6 +851,7 @@ body {
 
     /* Browse row stacks on small screens */
     .browse-row { flex-direction: column; gap: 8px; }
+    .camera-btn { display: flex; }
 
     /* Drop zone */
     .drop-title { font-size: 1rem; }
