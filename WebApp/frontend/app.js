@@ -37,7 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ---- Image attachment ----
-    attachBtn.addEventListener('click', () => imageInput.click());
+    attachBtn.addEventListener('click', () => {
+        imageInput.removeAttribute('capture');
+        imageInput.click();
+    });
 
     imageInput.addEventListener('change', e => {
         const file = e.target.files[0];
@@ -215,12 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Make browse-btn always open file picker (no capture)
-    attachBtn.removeEventListener('click', () => imageInput.click());
-    attachBtn.addEventListener('click', () => {
-        imageInput.removeAttribute('capture');
-        imageInput.click();
-    });
+
 
     // ---- Navbar Scroll Effect ----
     const navbar = document.getElementById('navbar');
