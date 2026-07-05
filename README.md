@@ -10,9 +10,7 @@
 
 ### 📷 Screenshots
 
-| Web UI | Android App | Navigation Mode |
-|:---:|:---:|:---:|
-| ![Web UI](https://placehold.co/300x600/png?text=Web+UI) | ![Android App](https://placehold.co/300x600/png?text=Android+App) | ![Navigation Mode](https://placehold.co/300x600/png?text=Navigation+Mode) |
+![VisionAssist AI Web UI](screenshot.png)
 
 <br>
 
