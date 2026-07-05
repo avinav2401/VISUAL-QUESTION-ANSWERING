@@ -61,12 +61,28 @@ The system integrates three powerful pipelines behind a unified API:
 
 ```mermaid
 graph TD
-    A[Image] --> B[ViLT Transformer Server]
-    C[Question] --> B
-    B --> D[Synthesized Answer]
-    
-    E[Web Browser] --> |API Request| B
-    F[Native Android App] --> |OkHttp Multipart Request| B
+    subgraph Frontend [Client Interfaces]
+        E[Web App <br> WebRTC Camera]
+        F[Android App <br> CameraX]
+    end
+
+    subgraph Backend [Unified AI Server - FastAPI]
+        B[API Router]
+        V[ViLT Transformer <br> VQA]
+        Y[YOLOv8 <br> Navigation]
+        O[EasyOCR <br> Text Reading]
+    end
+
+    E -->|API Request| B
+    F -->|OkHttp Multipart| B
+
+    B -->|/predict| V
+    B -->|/navigate| Y
+    B -->|/ocr| O
+
+    V --> D[Synthesized Answer]
+    Y --> D
+    O --> D
 ```
 
 ---
