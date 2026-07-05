@@ -80,6 +80,7 @@ body {
     letter-spacing: -0.5px;
     background: linear-gradient(135deg, #a78bfa, #f472b6);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -810,6 +811,7 @@ body {
     letter-spacing: -0.5px;
     background: linear-gradient(135deg, #c4b5fd, #f9a8d4);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 4px;
 }
@@ -970,6 +972,7 @@ body {
     /* Stack layout - Native App Feel */
     body {
         -webkit-user-select: none;
+        user-select: none;
         -webkit-tap-highlight-color: transparent;
     }
 
