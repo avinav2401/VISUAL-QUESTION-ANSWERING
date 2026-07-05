@@ -128,7 +128,8 @@ def navigate(image: UploadFile = File(...)):
             conf = float(box.conf[0])
             xyxy = box.xyxy[0].tolist()
             
-            if conf > 0.5:
+            # Lowered threshold to 0.25 for better safety in navigation
+            if conf > 0.25:
                 area = (xyxy[2] - xyxy[0]) * (xyxy[3] - xyxy[1])
                 detections.append({
                     "object": cls_name,
