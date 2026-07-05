@@ -384,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                isProcessingFrame = false;
                 runOnUiThread(() -> {
                     if (!currentMode.equals("NAV")) {
                         progressBar.setVisibility(View.GONE);
@@ -396,6 +397,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                isProcessingFrame = false;
                 String respStr = response.body().string();
                 runOnUiThread(() -> {
                     if (!currentMode.equals("NAV")) {
