@@ -10,7 +10,7 @@
 
 ### 📷 Screenshots
 
-![VisionAssist AI Web UI](screenshot.png)
+![VisionAssist AI Web UI](project.jpg)
 
 <br>
 
