@@ -159,7 +159,7 @@ This repository serves as a comprehensive showcase of modern AI and App Developm
 | **Deep Learning & AI** | ✅ ViT & Transformer Architectures<br>✅ Object Detection (YOLOv8)<br>✅ Optical Character Recognition (OCR)<br>✅ Multimodal Learning & Feature Fusion |
 | **Voice & NLP** | ✅ Low-Latency Intent Routing<br>✅ Speech Recognition (STT)<br>✅ Text-to-Speech Synthesis (TTS) |
 | **Cloud & API Engineering** | ✅ RESTful API Design (FastAPI)<br>✅ Cloud Deployment (Hugging Face Spaces, Vercel)<br>✅ CORS & Reverse Proxying<br>✅ Async Programming & Threadpools |
-| **Performance Optimization** | ✅ Hardware Acceleration Support (PyTorch)<br>✅ Memory Management (TTLCache)<br>✅ Frontend Blob Management (`createObjectURL`)<br>✅ Disk I/O Minimization (`ImageProxy`) |
+| **Performance Optimization** | ✅ GPU Hardware Acceleration Support (CUDA)<br>✅ Memory Management (TTLCache)<br>✅ Frontend Blob Management (`createObjectURL`)<br>✅ Disk I/O Minimization (`ImageProxy`) |
 | **Software Engineering** | ✅ Native Android App Development (CameraX)<br>✅ Responsive Web UI/UX (Vanilla JS/CSS)<br>✅ Spatial Geometry (Bounding Box Area Sorting)<br>✅ Accessibility-First Design |
 
 </div>
