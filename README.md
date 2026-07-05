@@ -31,7 +31,7 @@ This platform is powered by three distinct AI models, seamlessly unified into on
 | :--- | :--- | :--- |
 | 👁️‍🗨️ **Vision** | `ViLT` | *"What is on the table?"* |
 | 📝 **OCR** | `EasyOCR` | *"Read this medicine label."* |
-| 🚶 **Navigation** | `YOLOv8` | *"Chair ahead, person approaching."* |
+| 🚶 **Navigation** | `YOLOv8` | *"chair ahead"* or *"Path is clear."* |
 
 ---
 
