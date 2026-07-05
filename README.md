@@ -18,7 +18,7 @@ Welcome to the **Visual Question Answering (VQA)** project. This repository repr
 > 
 > **Enhanced Voice Features & Auto-Routing:**
 > - 🎙️ **Speech-to-Text (Voice Input):** Users can click the microphone button or simply say "Hey Vision" to speak their questions.
-> - 🤖 **Intent Auto-Router:** The app features a blazing-fast, zero-latency heuristic router. Simply say "Guide me" to automatically start navigation, or "Read this" to instantly extract text. The app selects the correct AI model automatically!
+> - 🤖 **Intent Auto-Router:** The app features a blazing-fast, low-latency heuristic router. Simply say "Guide me" to automatically start navigation, or "Read this" to instantly extract text. The app selects the correct AI model automatically!
 > - 🔊 **Text-to-Speech (Voice Output):** The AI automatically reads the answer out loud. Users can easily toggle this feature on/off.
 
 ---
@@ -37,7 +37,7 @@ This platform is powered by three distinct AI models, seamlessly unified into on
 
 The human brain processes the world through multiple modalities simultaneously. When we see a scene, we don't just register pixel values; we extract semantic meaning. When we hear a question, we map those words to our conceptual understanding of the world. 
 
-This project aims to replicate that dual-processing capability, featuring a unified architecture that provides state-of-the-art accuracy across all platforms:
+This project aims to replicate that dual-processing capability, featuring a production-ready multimodal architecture combining VQA, OCR, and navigation assistance:
 
 | Context | Environment | Focus |
 |:---|:---|:---|
@@ -56,7 +56,7 @@ To provide the highest possible accuracy and a unified user experience, both the
 The system integrates three powerful pipelines behind a unified API:
 
 - **ViLT (Vision-and-Language Transformer)**: Tokenizes both image patches and text tokens directly into a single transformer for visual QA.
-- **YOLOv8 (Ultralytics)**: State-of-the-art real-time object detection for the continuous Navigation Assistant.
+- **YOLOv8 (Ultralytics)**: Real-time object detection for the continuous Navigation Assistant.
 - **EasyOCR**: Lightweight, highly accurate Optical Character Recognition for document and sign reading.
 
 ```mermaid
@@ -95,7 +95,7 @@ The repository is modularly structured to separate the training environments fro
 |:---|:---|:---|
 | 📓 **`/Model`** | The research and training nexus. | Jupyter notebooks detailing data preprocessing and legacy model generation. |
 | 📱 **`/Android app`** | The native mobile application workspace. | A fully native Android application featuring CameraX integration, and a Voice-Guided Intent Auto-Router. |
-| 🌐 **`/WebApp`** | The full-stack web portal. | The `backend/` runs the FastAPI inference server with GPU acceleration and threadpools. The `frontend/` provides a highly responsive web interface utilizing the same Zero-Latency Intent Auto-Router for seamless interaction. |
+| 🌐 **`/WebApp`** | The full-stack web portal. | The `backend/` runs the FastAPI inference server with threadpools. The `frontend/` provides a highly responsive web interface utilizing the same Low-Latency Intent Auto-Router for seamless interaction. |
 
 ---
 
@@ -157,9 +157,9 @@ This repository serves as a comprehensive showcase of modern AI and App Developm
 | **Domain** | **Concepts Demonstrated** |
 | :--- | :--- |
 | **Deep Learning & AI** | ✅ ViT & Transformer Architectures<br>✅ Object Detection (YOLOv8)<br>✅ Optical Character Recognition (OCR)<br>✅ Multimodal Learning & Feature Fusion |
-| **Voice & NLP** | ✅ Zero-Latency Intent Routing<br>✅ Speech Recognition (STT)<br>✅ Text-to-Speech Synthesis (TTS) |
+| **Voice & NLP** | ✅ Low-Latency Intent Routing<br>✅ Speech Recognition (STT)<br>✅ Text-to-Speech Synthesis (TTS) |
 | **Cloud & API Engineering** | ✅ RESTful API Design (FastAPI)<br>✅ Cloud Deployment (Hugging Face Spaces, Vercel)<br>✅ CORS & Reverse Proxying<br>✅ Async Programming & Threadpools |
-| **Performance Optimization** | ✅ GPU Hardware Acceleration (CUDA)<br>✅ Memory Management (TTLCache)<br>✅ Frontend Blob Management (`createObjectURL`)<br>✅ Disk I/O Minimization (`ImageProxy`) |
+| **Performance Optimization** | ✅ Hardware Acceleration Support (PyTorch)<br>✅ Memory Management (TTLCache)<br>✅ Frontend Blob Management (`createObjectURL`)<br>✅ Disk I/O Minimization (`ImageProxy`) |
 | **Software Engineering** | ✅ Native Android App Development (CameraX)<br>✅ Responsive Web UI/UX (Vanilla JS/CSS)<br>✅ Spatial Geometry (Bounding Box Area Sorting)<br>✅ Accessibility-First Design |
 
 </div>
