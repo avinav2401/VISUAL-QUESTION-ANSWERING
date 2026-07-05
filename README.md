@@ -10,14 +10,13 @@
 
 Welcome to the **VisionAssist AI** project. This repository represents an exploration into multimodal artificial intelligence, designed to fuse computer vision with natural language processing. The ultimate goal? To empower machines to look at an image, comprehend a question asked about that image, and synthesize an accurate, context-aware answer. 
 
-> [!NOTE]
-> **Accessibility First**
-> At its core, this project is an accessibility initiative. By giving machines the ability to describe and answer questions about the visual world, we create powerful tools for the visually impaired, allowing them to interact with their surroundings through a seamless interface.
-> 
-> **Enhanced Voice Features & Auto-Routing:**
-> - 🎙️ **Speech-to-Text (Voice Input):** Users can click the microphone button or simply say "Hey Vision" to speak their questions.
-> - 🤖 **Intent Auto-Router:** The app features a blazing-fast, low-latency heuristic router. Simply say "Guide me" to automatically start navigation, or "Read this" to instantly extract text. The app selects the correct AI model automatically!
-> - 🔊 **Text-to-Speech (Voice Output):** The AI automatically reads the answer out loud. Users can easily toggle this feature on/off.
+### ♿ Accessibility First
+At its core, this project is an accessibility initiative. By giving machines the ability to describe and answer questions about the visual world, we create powerful tools for the visually impaired, allowing them to interact with their surroundings through a seamless interface.
+
+**Enhanced Voice Features & Auto-Routing:**
+- 🎙️ **Speech-to-Text (Voice Input):** Users can click the microphone button or simply say "Hey Vision" to speak their questions.
+- 🤖 **Intent Auto-Router:** The app features a blazing-fast, low-latency heuristic router. Simply say "Guide me" to automatically start navigation, or "Read this" to instantly extract text. The app selects the correct AI model automatically!
+- 🔊 **Text-to-Speech (Voice Output):** The AI automatically reads the answer out loud. Users can easily toggle this feature on/off.
 
 ---
 
