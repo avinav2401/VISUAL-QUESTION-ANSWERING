@@ -1,16 +1,22 @@
 <div align="center">
 
-# 👁️‍🗨️ Visual Question Answering (VQA)
+# 👁️‍🗨️ VisionAssist AI
 
-**Bridging Vision and Language**
-
-> *"To perceive is one thing; to articulate that perception is another. True intelligence lies at their intersection."*
+**See. Understand. Assist.**
 
 </div>
 
 <br>
 
-Welcome to the **Visual Question Answering (VQA)** project. This repository represents an exploration into multimodal artificial intelligence, designed to fuse computer vision with natural language processing. The ultimate goal? To empower machines to look at an image, comprehend a question asked about that image, and synthesize an accurate, context-aware answer. 
+### 📷 Screenshots
+
+- Web UI
+- Android App
+- Navigation Mode
+
+<br>
+
+Welcome to the **VisionAssist AI** project. This repository represents an exploration into multimodal artificial intelligence, designed to fuse computer vision with natural language processing. The ultimate goal? To empower machines to look at an image, comprehend a question asked about that image, and synthesize an accurate, context-aware answer. 
 
 > [!NOTE]
 > **Accessibility First**
@@ -44,7 +50,7 @@ This project aims to replicate that dual-processing capability, featuring a prod
 | Context | Environment | Focus |
 |:---|:---|:---|
 | 📱 **The Edge** | Android App | Designed for portability and performance, utilizing a 100% Native Android UI with Java and XML, directly connecting to powerful cloud models. |
-| ☁️ **The Cloud** | Web App | Built for unrestricted computational power, leveraging state-of-the-art transformer architectures for complex reasoning. |
+| ☁️ **The Cloud** | Web App | Built for unrestricted computational power, leveraging transformer-based vision-language models for multimodal reasoning. |
 
 ---
 
@@ -59,7 +65,7 @@ The system integrates three powerful pipelines behind a unified API:
 
 - **ViLT (Vision-and-Language Transformer)**: Tokenizes both image patches and text tokens directly into a single transformer for visual QA.
 - **YOLOv8 (Ultralytics)**: Real-time object detection for the continuous Navigation Assistant.
-- **EasyOCR**: Lightweight, highly accurate Optical Character Recognition for document and sign reading.
+- **EasyOCR**: Lightweight Optical Character Recognition for document and sign reading.
 
 ```mermaid
 graph TD
