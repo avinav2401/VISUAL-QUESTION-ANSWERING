@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler navHandler = new Handler(Looper.getMainLooper());
     private boolean isNavigating = false;
 
-    private static final String BASE_URL = "http://10.0.2.2:8000";
+    private static final String BASE_URL = "https://avinavpri-vqa-backend.hf.space";
     
     private final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(60, TimeUnit.SECONDS)
