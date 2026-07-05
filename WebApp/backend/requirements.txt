@@ -5,3 +5,6 @@ Pillow
 numpy
 transformers
 torch
+easyocr
+ultralytics
+cachetools

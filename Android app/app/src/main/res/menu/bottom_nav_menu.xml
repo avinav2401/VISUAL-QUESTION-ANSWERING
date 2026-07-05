@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_vision"
+        android:icon="@android:drawable/ic_menu_camera"
+        android:title="Vision" />
+    <item
+        android:id="@+id/nav_ocr"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="OCR" />
+    <item
+        android:id="@+id/nav_navigation"
+        android:icon="@android:drawable/ic_menu_directions"
+        android:title="Navigation" />
+</menu>

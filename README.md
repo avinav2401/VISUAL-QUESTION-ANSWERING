@@ -16,9 +16,20 @@ Welcome to the **Visual Question Answering (VQA)** project. This repository repr
 > **Accessibility First**
 > At its core, this project is an accessibility initiative. By giving machines the ability to describe and answer questions about the visual world, we create powerful tools for the visually impaired, allowing them to interact with their surroundings through a seamless interface.
 > 
-> **Enhanced Voice Features:**
-> - 🎙️ **Speech-to-Text (Voice Input):** Users can click the microphone button to speak their questions instead of typing.
-> - 🔊 **Text-to-Speech (Voice Output):** The AI automatically reads the answer out loud. Users can easily toggle this feature on/off using the speaker button right next to the microphone.
+> **Enhanced Voice Features & Auto-Routing:**
+> - 🎙️ **Speech-to-Text (Voice Input):** Users can click the microphone button or simply say "Hey Vision" to speak their questions.
+> - 🤖 **Intent Auto-Router:** The app features a blazing-fast, zero-latency heuristic router. Simply say "Guide me" to automatically start navigation, or "Read this" to instantly extract text. The app selects the correct AI model automatically!
+> - 🔊 **Text-to-Speech (Voice Output):** The AI automatically reads the answer out loud. Users can easily toggle this feature on/off.
+
+---
+
+## 🌟 Core Features
+
+This platform is powered by three distinct AI models, seamlessly unified into one interface:
+
+1. 👁️‍🗨️ **Vision (VQA)**: Powered by `vilt-b32-finetuned-vqa`. Ask complex, open-ended questions about your surroundings (e.g., "What color is the car?", "Is it raining?").
+2. 📝 **OCR (Text Extraction)**: Powered by `EasyOCR`. Point the camera at documents, menus, or street signs, and the app will instantly read the text out loud.
+3. 🚶 **Navigation Assistant**: Powered by `YOLOv8`. A continuous scanning mode that captures frames every 2 seconds to detect obstacles and guide you safely (e.g., "Chair ahead", "Person approaching").
 
 ---
 
@@ -42,11 +53,11 @@ To provide the highest possible accuracy and a unified user experience, both the
 ### The ViLT Architecture
 *Deployed on Hugging Face Spaces via FastAPI and PyTorch*
 
-The system utilizes the **ViLT (Vision-and-Language Transformer)** model. ViLT tokenizes both the image patches and the text tokens directly into a single, massive transformer network.
+The system integrates three powerful pipelines behind a unified API:
 
-- **Image Processing:** Patch-based visual embeddings without the need for heavy CNN feature extractors.
-- **Text Processing:** BERT-style subword tokenization.
-- **Inference:** Hugging Face `vilt-b32-finetuned-vqa` weights provide high-accuracy, zero-shot-like capabilities on complex, unseen grammatical structures.
+- **ViLT (Vision-and-Language Transformer)**: Tokenizes both image patches and text tokens directly into a single transformer for visual QA.
+- **YOLOv8 (Ultralytics)**: State-of-the-art real-time object detection for the continuous Navigation Assistant.
+- **EasyOCR**: Lightweight, highly accurate Optical Character Recognition for document and sign reading.
 
 ```mermaid
 graph TD
@@ -67,8 +78,8 @@ The repository is modularly structured to separate the training environments fro
 | Directory | Purpose | Contents |
 |:---|:---|:---|
 | 📓 **`/Model`** | The research and training nexus. | Jupyter notebooks detailing data preprocessing and legacy model generation. |
-| 📱 **`/Android app`** | The native mobile application workspace. | A fully native Android application built with XML Layouts, Java, and OkHttp to securely interface with the cloud backend. Features native Camera, Gallery, Speech-to-Text, and Text-to-Speech intents. |
-| 🌐 **`/WebApp`** | The full-stack web portal. | The `backend/` runs the FastAPI inference server, while the `frontend/` provides a highly responsive, animated, vanilla web interface. |
+| 📱 **`/Android app`** | The native mobile application workspace. | A fully native Android application featuring CameraX integration, and a Voice-Guided Intent Auto-Router. |
+| 🌐 **`/WebApp`** | The full-stack web portal. | The `backend/` runs the FastAPI inference server with GPU acceleration and threadpools. The `frontend/` provides a highly responsive web interface utilizing the same Zero-Latency Intent Auto-Router for seamless interaction. |
 
 ---
 
@@ -129,11 +140,11 @@ This repository serves as a comprehensive showcase of modern AI and App Developm
 
 | **Domain** | **Concepts Demonstrated** |
 | :--- | :--- |
-| **Deep Learning** | ✅ CNN / ViT (Image Patch Features)<br>✅ Transformer Architectures<br>✅ Sequence Models & Word Embeddings<br>✅ Cross-Modal Encoders |
-| **Multimodal AI** | ✅ Multimodal Learning (Image + Text)<br>✅ Feature Fusion<br>✅ Question Understanding<br>✅ Answer Generation |
-| **Core AI Fields**| ✅ Natural Language Processing (NLP)<br>✅ Computer Vision (CV) |
-| **Voice & Speech** | ✅ Speech Recognition (Speech-to-Text)<br>✅ Text-to-Speech (TTS) |
-| **Engineering** | ✅ Mobile App Development (Android)<br>✅ Accessibility-First Design |
+| **Deep Learning & AI** | ✅ ViT & Transformer Architectures<br>✅ Object Detection (YOLOv8)<br>✅ Optical Character Recognition (OCR)<br>✅ Multimodal Learning & Feature Fusion |
+| **Voice & NLP** | ✅ Zero-Latency Intent Routing<br>✅ Speech Recognition (STT)<br>✅ Text-to-Speech Synthesis (TTS) |
+| **Cloud & API Engineering** | ✅ RESTful API Design (FastAPI)<br>✅ Cloud Deployment (Hugging Face Spaces, Vercel)<br>✅ CORS & Reverse Proxying<br>✅ Async Programming & Threadpools |
+| **Performance Optimization** | ✅ GPU Hardware Acceleration (CUDA)<br>✅ Memory Management (TTLCache)<br>✅ Frontend Blob Management (`createObjectURL`)<br>✅ Disk I/O Minimization (`ImageProxy`) |
+| **Software Engineering** | ✅ Native Android App Development (CameraX)<br>✅ Responsive Web UI/UX (Vanilla JS/CSS)<br>✅ Spatial Geometry (Bounding Box Area Sorting)<br>✅ Accessibility-First Design |
 
 </div>
 

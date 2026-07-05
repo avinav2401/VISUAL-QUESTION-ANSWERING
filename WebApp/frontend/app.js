@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const geminiGreeting = document.querySelector('.gemini-greeting');
 
     let selectedFile = null;
+    let currentPreviewUrl = null;
 
     // ---- Helpers ----
     function showState(el) {
@@ -64,6 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
     removeImgBtn.addEventListener('click', () => {
         selectedFile = null;
         imageInput.value = '';
+        if (currentPreviewUrl) {
+            URL.revokeObjectURL(currentPreviewUrl);
+            currentPreviewUrl = null;
+        }
+        imagePreview.src = '';
         imgPreviewWrap.classList.add('hidden');
         imgPlaceholder.classList.remove('hidden');
         
@@ -94,17 +100,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadFile(file) {
         if (!file.type.startsWith('image/')) return;
         selectedFile = file;
-        const reader = new FileReader();
-        reader.onload = ev => {
-            imagePreview.src = ev.target.result;
-            imgPlaceholder.classList.add('hidden');
-            imgPreviewWrap.classList.remove('hidden');
-            if (geminiGreeting && document.body.classList.contains('android-app')) {
-                geminiGreeting.style.display = 'none';
-            }
-            syncBtn();
-        };
-        reader.readAsDataURL(file);
+        
+        // Revoke old URL to prevent memory leaks
+        if (currentPreviewUrl) {
+            URL.revokeObjectURL(currentPreviewUrl);
+        }
+        
+        currentPreviewUrl = URL.createObjectURL(file);
+        imagePreview.src = currentPreviewUrl;
+        imgPlaceholder.classList.add('hidden');
+        imgPreviewWrap.classList.remove('hidden');
+        if (geminiGreeting && document.body.classList.contains('android-app')) {
+            geminiGreeting.style.display = 'none';
+        }
+        syncBtn();
     }
 
     // ---- Question input ----
@@ -167,11 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (finalTrans) {
                             questionInput.value = finalTrans;
                             syncBtn();
-                            
-                            // Auto-submit if ready
-                            if (!askBtn.disabled) {
-                                askBtn.click();
-                            }
+                            if (!askBtn.disabled) askBtn.click();
                         }
                     };
 
@@ -218,16 +223,35 @@ document.addEventListener('DOMContentLoaded', () => {
         showState(loadingState);
         askBtn.disabled = true;
 
+        // Determine intent automatically
+        const lower = question.toLowerCase();
+        let currentMode = 'vision';
+        if (lower.includes('read') || lower.includes('text') || lower.includes('sign') || lower.includes('menu') || lower.includes('document') || lower.includes('ocr') || lower.includes('letter') || lower.includes('word')) {
+            currentMode = 'ocr';
+        } else if (lower.includes('guide') || lower.includes('navigate') || lower.includes('walk') || lower.includes('path') || lower.includes('direction')) {
+            currentMode = 'navigate';
+        }
+
         try {
             const form = new FormData();
             form.append('image', selectedFile);
-            form.append('question', question);
+            if (!window.currentSessionId) {
+                window.currentSessionId = Math.random().toString(36).substring(2);
+            }
+            if (currentMode === 'vision') {
+                form.append('question', question);
+                form.append('session_id', window.currentSessionId);
+            }
 
-            let apiUrl = '/api/predict';
+            let endpoint = '/predict';
+            if (currentMode === 'ocr') endpoint = '/ocr';
+            if (currentMode === 'navigate') endpoint = '/navigate';
+
+            let apiUrl = '/api' + endpoint;
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                apiUrl = 'http://localhost:8000/predict';
+                apiUrl = 'http://localhost:8000' + endpoint;
             } else if (navigator.userAgent.includes("VQA-Android-App")) {
-                apiUrl = 'https://avinavpri-vqa-backend.hf.space/predict';
+                apiUrl = 'https://avinavpri-vqa-backend.hf.space' + endpoint;
             }
 
             const res = await fetch(apiUrl, { method: 'POST', body: form });
@@ -238,7 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await res.json();
-            renderResults(data.predictions);
+            // Pass the mode to the renderer
+            renderResults(data, currentMode);
         } catch (err) {
             console.error(err);
             errorText.textContent = err.message || 'Could not connect to the backend.';
@@ -249,40 +274,75 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ---- Render Results ----
-    function renderResults(preds) {
-        if (!preds || !preds.length) {
-            errorText.textContent = 'No predictions returned from the model.';
-            showState(errorState);
-            return;
+    function renderResults(data, currentMode) {
+        if (currentMode === 'vision') {
+            const preds = data.predictions;
+            if (!preds || !preds.length) {
+                errorText.textContent = 'No predictions returned from the model.';
+                showState(errorState);
+                return;
+            }
+
+            const top = preds[0];
+            const topPct = (top.confidence * 100).toFixed(1);
+
+            topAnswerEl.textContent = top.answer;
+            confValueEl.textContent = topPct + '%';
+
+            // Read out loud
+            if (isTtsEnabled && 'speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+                window.currentUtterance = new SpeechSynthesisUtterance(`The best answer is ${top.answer}`);
+                window.speechSynthesis.speak(window.currentUtterance);
+            }
+
+            // Others
+            otherListEl.innerHTML = '';
+            preds.slice(1).forEach((pred, i) => {
+                const pct = (pred.confidence * 100).toFixed(1);
+                const row = document.createElement('div');
+                row.className = 'other-row';
+                row.innerHTML = `
+                    <div class="other-bar" style="width:0%"></div>
+                    <span class="other-name">${esc(pred.answer)}</span>
+                    <span class="other-pct">${pct}%</span>
+                `;
+                otherListEl.appendChild(row);
+                setTimeout(() => row.querySelector('.other-bar').style.width = pct + '%', 60 + i * 60);
+            });
+            document.querySelector('.others-block').style.display = 'block';
+            document.querySelector('.result-model').textContent = '⚡ dandelin/vilt-b32-finetuned-vqa';
+
+        } else if (currentMode === 'ocr') {
+            const text = data.text || 'No text found in the image.';
+            topAnswerEl.textContent = text;
+            confValueEl.textContent = '';
+            otherListEl.innerHTML = '';
+            document.querySelector('.others-block').style.display = 'none';
+            document.querySelector('.result-model').textContent = '⚡ EasyOCR Extract';
+            
+            if (isTtsEnabled && 'speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                window.currentUtterance = new SpeechSynthesisUtterance(text);
+                window.speechSynthesis.speak(window.currentUtterance);
+            }
+        } else if (currentMode === 'navigate') {
+            let msg = 'Path is clear.';
+            if (data.detections && data.detections.length > 0) {
+                msg = `${data.detections[0].object} ahead`;
+            }
+            topAnswerEl.textContent = msg;
+            confValueEl.textContent = '';
+            otherListEl.innerHTML = '';
+            document.querySelector('.others-block').style.display = 'none';
+            document.querySelector('.result-model').textContent = '⚡ YOLOv8 Navigation';
+
+            if (isTtsEnabled && 'speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                window.currentUtterance = new SpeechSynthesisUtterance(msg);
+                window.speechSynthesis.speak(window.currentUtterance);
+            }
         }
-
-        const top = preds[0];
-        const topPct = (top.confidence * 100).toFixed(1);
-
-        topAnswerEl.textContent = top.answer;
-        confValueEl.textContent = topPct + '%';
-
-        // Read out loud
-        if (isTtsEnabled && 'speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // cancel any ongoing speech
-            const utterance = new SpeechSynthesisUtterance(`The best answer is ${top.answer}`);
-            window.speechSynthesis.speak(utterance);
-        }
-
-        // Others
-        otherListEl.innerHTML = '';
-        preds.slice(1).forEach((pred, i) => {
-            const pct = (pred.confidence * 100).toFixed(1);
-            const row = document.createElement('div');
-            row.className = 'other-row';
-            row.innerHTML = `
-                <div class="other-bar" style="width:0%"></div>
-                <span class="other-name">${esc(pred.answer)}</span>
-                <span class="other-pct">${pct}%</span>
-            `;
-            otherListEl.appendChild(row);
-            setTimeout(() => row.querySelector('.other-bar').style.width = pct + '%', 60 + i * 60);
-        });
 
         showState(resultsState);
         // Smooth scroll to results
@@ -339,8 +399,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // On mobile this opens camera; on desktop it opens file picker
             imageInput.setAttribute('capture', 'environment');
             imageInput.click();
-            // Remove capture attribute after so browse-btn still opens file picker
-            setTimeout(() => imageInput.removeAttribute('capture'), 500);
         });
     }
     // ---- Navbar Scroll Effect ----
