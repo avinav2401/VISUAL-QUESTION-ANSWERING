@@ -237,8 +237,7 @@ public class MainActivity extends AppCompatActivity {
                                 int idx = lower.indexOf("hey vision");
                                 String query = lower.substring(idx + 10).trim();
                                 if (!query.isEmpty()) {
-                                    etQuestion.setText(query);
-                                    captureAndProcess();
+                                    processVoiceIntent(query);
                                 } else {
                                     // Start actual prompt
                                     startSpeechRecognition();
@@ -287,11 +286,35 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == SPEECH_REQUEST_CODE && data != null) {
             ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (matches != null && !matches.isEmpty()) {
-                etQuestion.setText(matches.get(0));
-                captureAndProcess();
+                processVoiceIntent(matches.get(0));
             }
         }
         listenForWakeWord(); // Resume background listening
+    }
+
+    private void processVoiceIntent(String query) {
+        String lower = query.toLowerCase();
+        etQuestion.setText(query);
+
+        if (lower.contains("read") || lower.contains("text") || lower.contains("sign") || lower.contains("document") || lower.contains("ocr")) {
+            setMode("OCR");
+            bottomNavigationView.setSelectedItemId(R.id.nav_ocr);
+            captureAndProcess();
+        } else if (lower.contains("navigate") || lower.contains("guide") || lower.contains("walk") || lower.contains("path") || lower.contains("direction")) {
+            setMode("NAV");
+            bottomNavigationView.setSelectedItemId(R.id.nav_navigation);
+            if (!isNavigating) {
+                toggleNavigation();
+            }
+        } else if (lower.contains("stop navigation") || lower.contains("stop guide")) {
+            if (isNavigating) {
+                toggleNavigation();
+            }
+        } else {
+            setMode("VQA");
+            bottomNavigationView.setSelectedItemId(R.id.nav_vision);
+            captureAndProcess();
+        }
     }
 
     private void toggleNavigation() {
