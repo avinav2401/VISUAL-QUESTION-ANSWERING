@@ -8,12 +8,6 @@
 
 <br>
 
-### 📷 Screenshots
-
-![VisionAssist AI Web UI](project.jpg)
-
-<br>
-
 Welcome to the **VisionAssist AI** project. This repository represents an exploration into multimodal artificial intelligence, designed to fuse computer vision with natural language processing. The ultimate goal? To empower machines to look at an image, comprehend a question asked about that image, and synthesize an accurate, context-aware answer. 
 
 > [!NOTE]
@@ -36,6 +30,12 @@ This platform is powered by three distinct AI models, seamlessly unified into on
 | 👁️‍🗨️ **Vision** | `ViLT` | *"What is on the table?"* |
 | 📝 **OCR** | `EasyOCR` | *"Read this medicine label."* |
 | 🚶 **Navigation** | `YOLOv8` | *"chair ahead"* or *"Path is clear."* |
+
+---
+
+### 📷 Screenshots
+
+![VisionAssist AI Web UI](project.jpg)
 
 ---
 
