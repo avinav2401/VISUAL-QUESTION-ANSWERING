@@ -27,9 +27,11 @@ Welcome to the **Visual Question Answering (VQA)** project. This repository repr
 
 This platform is powered by three distinct AI models, seamlessly unified into one interface:
 
-1. 👁️‍🗨️ **Vision (VQA)**: Powered by `vilt-b32-finetuned-vqa`. Ask complex, open-ended questions about your surroundings (e.g., "What color is the car?", "Is it raining?").
-2. 📝 **OCR (Text Extraction)**: Powered by `EasyOCR`. Point the camera at documents, menus, or street signs, and the app will instantly read the text out loud.
-3. 🚶 **Navigation Assistant**: Powered by `YOLOv8`. A continuous scanning mode that captures frames every 2 seconds to detect obstacles and guide you safely (e.g., "Chair ahead", "Person approaching").
+| Mode | Model | Example |
+| :--- | :--- | :--- |
+| 👁️‍🗨️ **Vision** | `ViLT` | *"What is on the table?"* |
+| 📝 **OCR** | `EasyOCR` | *"Read this medicine label."* |
+| 🚶 **Navigation** | `YOLOv8` | *"Chair ahead, person approaching."* |
 
 ---
 
