@@ -10,9 +10,9 @@
 
 ### 📷 Screenshots
 
-- Web UI
-- Android App
-- Navigation Mode
+| Web UI | Android App | Navigation Mode |
+|:---:|:---:|:---:|
+| ![Web UI](https://via.placeholder.com/300x600.png?text=Web+UI) | ![Android App](https://via.placeholder.com/300x600.png?text=Android+App) | ![Navigation Mode](https://via.placeholder.com/300x600.png?text=Navigation+Mode) |
 
 <br>
 
