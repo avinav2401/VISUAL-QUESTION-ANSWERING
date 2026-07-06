@@ -244,7 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!selectedFile || !questionInput.value.trim()) return;
         
         if (isImageTooDark(imagePreview)) {
-            showError('The image is completely black or too dark! Please take a clearer photo.');
+            errorText.textContent = 'The image is completely black or too dark! Please take a clearer photo.';
+            showState(errorState);
             return;
         }
 
