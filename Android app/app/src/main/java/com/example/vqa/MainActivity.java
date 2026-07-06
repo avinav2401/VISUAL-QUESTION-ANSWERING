@@ -2,6 +2,7 @@ package com.example.vqa;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
@@ -10,6 +11,8 @@ import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
+
+import android.view.ScaleGestureDetector;
 
 import android.Manifest;
 import android.content.Intent;
@@ -198,7 +201,23 @@ public class MainActivity extends AppCompatActivity {
                 imageCapture = new ImageCapture.Builder().build();
                 CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
                 cameraProvider.unbindAll();
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
+                Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
+
+                ScaleGestureDetector scaleGestureDetector = new ScaleGestureDetector(this,
+                        new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                            @Override
+                            public boolean onScale(ScaleGestureDetector detector) {
+                                float currentZoom = camera.getCameraInfo().getZoomState().getValue().getZoomRatio();
+                                float newZoom = currentZoom * detector.getScaleFactor();
+                                camera.getCameraControl().setZoomRatio(newZoom);
+                                return true;
+                            }
+                        });
+
+                viewFinder.setOnTouchListener((v, event) -> {
+                    scaleGestureDetector.onTouchEvent(event);
+                    return true;
+                });
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
