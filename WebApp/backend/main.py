@@ -98,13 +98,46 @@ def extract_text(image: UploadFile = File(...)):
         img = ImageOps.exif_transpose(img).convert('RGB')
         import numpy as np
         img_np = np.array(img)
-        results = ocr_reader.readtext(img_np)
+        
+        # Try different rotations to handle sideways text
+        best_results = []
+        best_score = -1
+        
+        for angle in [0, 90, 180, 270]:
+            if angle != 0:
+                rotated_img = img.rotate(angle, expand=True)
+                current_np = np.array(rotated_img)
+            else:
+                current_np = img_np
+                
+            results = ocr_reader.readtext(current_np)
+            
+            # Calculate a score based on text length and confidence
+            score = 0
+            for res in results:
+                text = res[1]
+                prob = res[2]
+                if prob > 0.3:
+                    score += len(text) * prob
+                    
+            if score > best_score:
+                best_score = score
+                best_results = results
+                
+            # If we found a very good score on the first try, we can stop early
+            if angle == 0 and score > 50:
+                break
+                
+        results = best_results
     except Exception as e:
         raise HTTPException(status_code=400, detail="Failed to process image for OCR")
     
     text_lines = [res[1] for res in results]
     full_text = " ".join(text_lines)
     
+    if not full_text.strip():
+        full_text = "No text could be read from the image."
+        
     return {"text": full_text}
 
 @app.post("/navigate")
