@@ -87,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String BASE_URL = "https://avinavpri-vqa-backend.hf.space";
     
     private final OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(300, TimeUnit.SECONDS)
+            .writeTimeout(300, TimeUnit.SECONDS)
+            .readTimeout(300, TimeUnit.SECONDS)
             .build();
 
     @Override
