@@ -35,7 +35,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import org.json.JSONArray;
@@ -64,12 +63,13 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     private PreviewView viewFinder;
-    private BottomNavigationView bottomNavigationView;
     private Button btnSubmit;
     private EditText etQuestion;
     private ImageButton btnMic, btnTts;
     private ProgressBar progressBar;
     private TextView tvAnswer;
+    
+    private TextView btnModeVision, btnModeOCR, btnModeNav;
 
     private TextToSpeech textToSpeech;
     private SpeechRecognizer continuousRecognizer;
@@ -100,32 +100,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         viewFinder = findViewById(R.id.viewFinder);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
         btnSubmit = findViewById(R.id.btnSubmit);
         etQuestion = findViewById(R.id.etQuestion);
         btnMic = findViewById(R.id.btnMic);
         btnTts = findViewById(R.id.btnTts);
         progressBar = findViewById(R.id.progressBar);
         tvAnswer = findViewById(R.id.tvAnswer);
+        
+        btnModeVision = findViewById(R.id.btnModeVision);
+        btnModeOCR = findViewById(R.id.btnModeOCR);
+        btnModeNav = findViewById(R.id.btnModeNav);
 
         cameraExecutor = Executors.newSingleThreadExecutor();
 
         checkPermissions();
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_vision) {
-                setMode("VQA");
-                return true;
-            } else if (id == R.id.nav_ocr) {
-                setMode("OCR");
-                return true;
-            } else if (id == R.id.nav_navigation) {
-                setMode("NAV");
-                return true;
-            }
-            return false;
-        });
+        btnModeVision.setOnClickListener(v -> selectMode("VQA", btnModeVision));
+        btnModeOCR.setOnClickListener(v -> selectMode("OCR", btnModeOCR));
+        btnModeNav.setOnClickListener(v -> selectMode("NAV", btnModeNav));
 
         btnMic.setOnClickListener(v -> startSpeechRecognition());
         
@@ -317,12 +309,10 @@ public class MainActivity extends AppCompatActivity {
         etQuestion.setText(query);
 
         if (lower.contains("read") || lower.contains("text") || lower.contains("sign") || lower.contains("document") || lower.contains("ocr")) {
-            setMode("OCR");
-            bottomNavigationView.setSelectedItemId(R.id.nav_ocr);
+            selectMode("OCR", btnModeOCR);
             captureAndProcess();
         } else if (lower.contains("navigate") || lower.contains("guide") || lower.contains("walk") || lower.contains("path") || lower.contains("direction")) {
-            setMode("NAV");
-            bottomNavigationView.setSelectedItemId(R.id.nav_navigation);
+            selectMode("NAV", btnModeNav);
             if (!isNavigating) {
                 toggleNavigation();
             }
@@ -331,10 +321,25 @@ public class MainActivity extends AppCompatActivity {
                 toggleNavigation();
             }
         } else {
-            setMode("VQA");
-            bottomNavigationView.setSelectedItemId(R.id.nav_vision);
+            selectMode("VQA", btnModeVision);
             captureAndProcess();
         }
+    }
+
+    private void selectMode(String mode, TextView selectedBtn) {
+        setMode(mode);
+        
+        btnModeVision.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        btnModeVision.setTextColor(getResources().getColor(R.color.textColorSecondary, null));
+        
+        btnModeOCR.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        btnModeOCR.setTextColor(getResources().getColor(R.color.textColorSecondary, null));
+        
+        btnModeNav.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        btnModeNav.setTextColor(getResources().getColor(R.color.textColorSecondary, null));
+        
+        selectedBtn.setBackground(getResources().getDrawable(R.drawable.bg_chip, null));
+        selectedBtn.setTextColor(getResources().getColor(R.color.textColorPrimary, null));
     }
 
     private void toggleNavigation() {

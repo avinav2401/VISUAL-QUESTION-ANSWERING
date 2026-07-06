@@ -105,7 +105,7 @@
         android:padding="8dp"
         android:layout_margin="16dp"
         android:gravity="center_vertical"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintBottom_toTopOf="@id/modeSelector"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -153,14 +153,51 @@
             android:paddingHorizontal="16dp" />
     </LinearLayout>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/modeSelector"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
-        app:menu="@menu/bottom_nav_menu"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_input_box"
+        android:padding="4dp"
+        android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/btnModeVision"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vision"
+            android:textColor="@color/textColorPrimary"
+            android:background="@drawable/bg_chip"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnModeOCR"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OCR"
+            android:textColor="@color/textColorSecondary"
+            android:background="@android:color/transparent"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:layout_marginStart="4dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnModeNav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Navigation"
+            android:textColor="@color/textColorSecondary"
+            android:background="@android:color/transparent"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:layout_marginStart="4dp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
