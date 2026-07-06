@@ -223,9 +223,30 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     
+    function isImageTooDark(img) {
+        if (!img || !img.naturalWidth) return false;
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        let brightnessSum = 0, sampleCount = 0;
+        for (let i = 0; i < data.length; i += 40) {
+            brightnessSum += (0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
+            sampleCount++;
+        }
+        return (brightnessSum / sampleCount) < 10;
+    }
+
         // ---- Ask AI ----
     askBtn.addEventListener('click', async () => {
         if (!selectedFile || !questionInput.value.trim()) return;
+        
+        if (isImageTooDark(imagePreview)) {
+            showError('The image is completely black or too dark! Please take a clearer photo.');
+            return;
+        }
 
         const question = questionInput.value.trim();
         showState(loadingState);

@@ -404,6 +404,28 @@ public class MainActivity extends AppCompatActivity {
         // Compress and downscale image for faster upload
         Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
         if (bitmap != null) {
+            long sum = 0;
+            int count = 0;
+            for (int y = 0; y < bitmap.getHeight(); y += 10) {
+                for (int x = 0; x < bitmap.getWidth(); x += 10) {
+                    int pixel = bitmap.getPixel(x, y);
+                    int r = android.graphics.Color.red(pixel);
+                    int g = android.graphics.Color.green(pixel);
+                    int b = android.graphics.Color.blue(pixel);
+                    sum += (0.299 * r + 0.587 * g + 0.114 * b);
+                    count++;
+                }
+            }
+            if (count > 0 && (sum / count) < 10) {
+                runOnUiThread(() -> {
+                    progressBar.setVisibility(View.GONE);
+                    btnSubmit.setEnabled(true);
+                    tvAnswer.setText("Error: Image is completely dark/black. Please take a clearer photo.");
+                    tvAnswer.setVisibility(View.VISIBLE);
+                });
+                return;
+            }
+
             int maxDim = 800;
             int width = bitmap.getWidth();
             int height = bitmap.getHeight();
