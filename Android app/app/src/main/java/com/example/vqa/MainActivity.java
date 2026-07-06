@@ -13,7 +13,9 @@ import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
 import android.view.ScaleGestureDetector;
-
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import java.io.ByteArrayOutputStream;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -399,6 +401,23 @@ public class MainActivity extends AppCompatActivity {
         String url = BASE_URL;
         String question = etQuestion.getText().toString().trim();
         
+        // Compress and downscale image for faster upload
+        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        if (bitmap != null) {
+            int maxDim = 800;
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            if (width > maxDim || height > maxDim) {
+                float ratio = Math.min((float) maxDim / width, (float) maxDim / height);
+                width = Math.round((float) ratio * width);
+                height = Math.round((float) ratio * height);
+                bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+            }
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+            imageBytes = stream.toByteArray();
+        }
+
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("image", "capture.jpg", RequestBody.create(imageBytes, MediaType.parse("image/jpeg")));
 
