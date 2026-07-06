@@ -245,6 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (isImageTooDark(imagePreview)) {
             errorText.textContent = 'The image is completely black or too dark! Please take a clearer photo.';
+            const errHint = document.querySelector('.err-hint');
+            if (errHint) errHint.style.display = 'none';
             showState(errorState);
             return;
         }
@@ -297,6 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error(err);
             errorText.textContent = err.message || 'Could not connect to the backend.';
+            const errHint = document.querySelector('.err-hint');
+            if (errHint) errHint.style.display = 'block';
             showState(errorState);
         } finally {
             syncBtn();
