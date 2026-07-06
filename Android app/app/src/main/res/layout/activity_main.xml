@@ -155,20 +155,23 @@
 
     <LinearLayout
         android:id="@+id/modeSelector"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@drawable/bg_input_box"
         android:padding="4dp"
         android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/btnModeVision"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Vision"
+            android:gravity="center"
             android:textColor="@color/textColorPrimary"
             android:background="@drawable/bg_chip"
             android:paddingHorizontal="16dp"
@@ -177,9 +180,11 @@
 
         <TextView
             android:id="@+id/btnModeOCR"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="OCR"
+            android:gravity="center"
             android:textColor="@color/textColorSecondary"
             android:background="@android:color/transparent"
             android:paddingHorizontal="16dp"
@@ -189,9 +194,11 @@
 
         <TextView
             android:id="@+id/btnModeNav"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Navigation"
+            android:gravity="center"
             android:textColor="@color/textColorSecondary"
             android:background="@android:color/transparent"
             android:paddingHorizontal="16dp"
