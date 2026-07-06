@@ -57,6 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
         imageInput.click();
     });
 
+    const cameraBtn = document.getElementById('camera-btn');
+    if (cameraBtn) {
+        cameraBtn.addEventListener('click', () => {
+            imageInput.setAttribute('capture', 'environment');
+            imageInput.click();
+        });
+    }
+
     imageInput.addEventListener('change', e => {
         const file = e.target.files[0];
         if (file) loadFile(file);
