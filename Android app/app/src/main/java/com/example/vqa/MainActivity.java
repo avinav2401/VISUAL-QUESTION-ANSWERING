@@ -153,12 +153,15 @@ public class MainActivity extends AppCompatActivity {
 
         if (mode.equals("VQA")) {
             etQuestion.setVisibility(View.VISIBLE);
+            etQuestion.setEnabled(true);
             btnSubmit.setText("Ask AI");
         } else if (mode.equals("OCR")) {
-            etQuestion.setVisibility(View.GONE);
+            etQuestion.setVisibility(View.INVISIBLE);
+            etQuestion.setEnabled(false);
             btnSubmit.setText("Read Text");
         } else if (mode.equals("NAV")) {
-            etQuestion.setVisibility(View.GONE);
+            etQuestion.setVisibility(View.INVISIBLE);
+            etQuestion.setEnabled(false);
             btnSubmit.setText("Start Nav");
         }
     }
